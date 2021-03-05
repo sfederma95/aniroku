@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}{{anime_genre['mal_url']['name']}}{% endblock %}
+
+{% block content %}
+<h1>{{anime_genre['mal_url']['name']}}:</h1>
+<div class='container-fluid'>
+    <div class='row'>
+    {%for anime in anime_genre['anime'][:40]%}
+    <div class="card mb-3 col-3">
+        <img style='max-height:250px;' src="{{anime['image_url']}}">
+        <div class="card-body">
+            <h5 class="card-title">{{anime['title']}}</h5>
+            <p class="card-text">{{anime['synopsis']}}</p>
+            <a href='{{anime["url"]}}' class="card-text"><small class="text-muted">More Info</small></a>
+        </div>
+    </div>
+    {%endfor%}
+    </div>
+    </div>
+{% endblock %}

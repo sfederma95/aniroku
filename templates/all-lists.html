@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}All Anime Lists{% endblock %}
+{% block content %}
+    <h1>Check out all the cool lists already out there!</h1>
+    {%for list in lists%}
+        <p><a href='/lists/{{list.id}}'>{{list.name}}</a></p>
+        <p>-- by {{list.users.username}}</p>
+    {%endfor%}
+    <a href="/login" class="btn btn-primary">Login</a>
+    <a href="/signup" class="btn btn-primary">Sign Up</a>
+{% endblock %}

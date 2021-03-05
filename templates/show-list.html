@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}All Anime Lists{% endblock %}
+{% block content %}
+    {%for category in categories%}
+    <button class='btn btn-success category-select' id='{{category}}'>{{category}}</button>
+    {%endfor%}
+    <button class='btn btn-success' id='clear-filter'>Clear filters</button>
+    {%if (current_user.id != curr_list.users.id) and (current_user.is_active != False)%}
+    <a href="/{{curr_list.id}}/suggestions" class="btn btn-primary">Suggest an anime</a>
+    {%endif%}
+    <h1>Check out this cool list!</h1>
+    {%if current_user.id == curr_list.users.id%}
+        <a href="/{{curr_list.id}}/suggestion-inbox" class="btn btn-warning">Suggestion Inbox ({{curr_list.list_suggestions|length}})</a>
+        <a href="/lists/{{curr_list.id}}/add" class="btn btn-primary">Add to list</a>
+        <a href="/lists/{{curr_list.id}}/update" class="btn btn-warning">Update Details</a>
+        <form action='/lists/{{curr_list.id}}/delete' method="POST">
+        <button class="btn btn-danger">Delete</button>
+        </form>
+    {%endif%}
+    <p>{{curr_list.name}}</p>
+    <p>{{curr_list.description}}</p>
+    <p>-- by {{curr_list.users.username}}</p>
+    {%for entry in curr_list.list_entries%}
+    <div class='listed-anime {{curr_list.list_entries.index(entry)}}'>
+    <p>anime title:<a class='recommended' href='/{{entry.anime_id}}/recommendations'>{{entry.anime_title}}</a></p>
+    {%if current_user.id == curr_list.users.id%}
+    <div class='update'>
+    <button class="btn btn-warning update-button {{curr_list.list_entries.index(entry)}}">Update entry</button>
+    <form class='update-entry' method="POST" action="/{{curr_list.id}}/{{entry.id}}/update" hidden>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <label for='rating'>Your new rating:</label>
+        <p><input name='rating' type="number" max=10 min=1 placeholder='1'></p>
+        {%for category in all_categories%}
+        <div>
+            {{category.name}}:
+            <input type="checkbox" name="categories" value='{{category.name}}'>
+          </div>
+        {%endfor%}
+        <button class="btn btn-primary btn-lg btn-block">Update!</button>
+    </form>
+    <button class="btn btn-info cancel-entry-update" hidden>Cancel</button>
+    </div>
+    <form method="POST" action="/{{curr_list.id}}/{{entry.id}}/remove">
+        <button class="btn btn-danger">Remove entry</button>
+    </form>
+    {%endif%}
+    <div class='comments'>
+    <p>Comments:</p>
+    {%for comment in entry.entry_comments%}
+    <p>{{comment.text}}</p>
+    <p>-- {{comment.username}}</p>
+    {%endfor%}
+    </div>
+    {%if current_user.is_active != False%}
+    <div class='add-comment'>
+    <button class='btn btn-primary comment-button'>Add Comment</button>
+    <form class='add-comment' method="POST" action="/{{curr_list.id}}/{{entry.id}}/add-comment" hidden>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <label for='comment'>Your comment:</label>
+        <p><input name='comment' type="text" required></p>
+        <button class="btn btn-primary btn-lg btn-block">Add Comment!</button>
+    </form>
+    <button class="btn btn-info cancel-comment" hidden>Cancel</button>
+    </div>
+    {%endif%}
+    <p>Your Rating:{{entry.rating}}</p>
+    <p>Type:{{entry.anime_type}}</p>
+    {%if entry.categories%}
+    {%for category in entry.categories%}
+    <span class='{{category}}'>{{category}}</span>
+    {%endfor%}
+    {%endif%}
+    {%for genre in entry.anime_genres%}
+        <span><a class='genre' href="/genres/{{genres[genre]}}">{{genre}}</a></span>
+    {%endfor%}
+</div>
+
+    {%endfor%}
+    <div class="waitpage" id="waitpage" style="display: none;">
+        <div class="waitpage-box">
+            <p>
+                <img alt="(Loading)" src="https://media.giphy.com/media/3o7bu3XilJ5BOiSGic/giphy.gif">
+                <span>Please Wait...</span>
+            </p>
+        </div>
+    </div>
+{% endblock %}

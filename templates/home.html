@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Homepage{% endblock %}
+{% block content %}
+    <h1>Welcome to Aniroku</h1>
+    <p>Sign up now to start creating your lists!</p>
+    <p>Or log in to view and edit your lists</p>
+    <a href="/signup" class="btn btn-primary">Sign up</a>
+    <a href="/login" class="btn btn-primary">Login</a>
+    <p>Don't want to sign up right now? No worries! You can view all Aniroku lists without ever signing up!</p>
+    <a href="/lists" class="btn btn-primary">All the lists</a>
+{% endblock %}

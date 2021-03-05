@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}Suggestion Form{% endblock %}
+
+{% block content %}
+
+  <div class="row justify-content-md-center">
+  <div class="col-md-7 col-lg-5">
+    <h2 class="join-message">Suggest anime for this user</h2>
+    <p>Search for your favorite anime titles:</p>
+    <form class="navbar-form navbar-right" action='/{{curr_list.id}}/suggestions'>
+        <input name="q" class="form-control" placeholder="Search for Anime">
+        <button id='search' class="btn btn-default">
+          <span class="fa fa-search"></span>
+        </button>
+      </form>
+    </div>
+</div>
+    {%if anime%}
+    <form method="POST">
+      {{ form.hidden_tag() }}
+
+      {% for field in form if field.widget.input_type != 'hidden' %}
+        {% for error in field.errors %}
+          <span class="text-danger">{{ error }}</span>
+        {% endfor %}
+        {{ field(placeholder=field.label.text, class="form-control") }}
+      {% endfor %}
+
+      <button id='add-anime' class="btn btn-primary btn-lg btn-block">Add!</button>
+    </form>
+    {%endif%}
+  <button class="btn btn-warning btn-lg btn-block"><a href='/lists/{{curr_list.id}}'>Cancel</a></button>
+<div class='container-fluid'>
+    <div class='row'>
+    {%for anime in anime['results']%}
+    <div class="card mb-3 col-3">
+        <img style='max-height:250px;' src="{{anime['image_url']}}">
+        <div class="card-body">
+            <h5 class="card-title">{{anime['title']}}</h5>
+            <p class="card-text">{{anime['synopsis']}}</p>
+            <p class="card-text"><small class="text-muted">Rating: {{anime['score']}}</small></p>
+        </div>
+    </div>
+    {%endfor%}
+    </div>
+    </div>
+
+
+    
+  <div class="waitpage" id="waitpage" style="display: none;">
+      <div class="waitpage-box">
+          <p>
+              <img alt="(Loading)" src="https://media.giphy.com/media/3o7bu3XilJ5BOiSGic/giphy.gif">
+              <span>Please Wait...</span>
+          </p>
+      </div>
+  </div>
+  
+{% endblock %}

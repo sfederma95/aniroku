@@ -1,0 +1,15 @@
+1. figure out commenting -- done
+2. forms not validated for entry update and commenting currently -- done
+3. remove filters button -- done
+3. from recommendations page what list would you like to save to? 
+4. send email notifications
+2. delete user -- done
+3. update user
+4. add anime from suggestion box
+4. refactor app.py
+5. what if users use bad words?
+6. what is users are adding spoilers?
+7. styles
+8. testing
+
+hours: 22 hours

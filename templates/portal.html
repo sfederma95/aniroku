@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}My Anime Lists{% endblock %}
+{% block content %}
+    <h1>Welcome to your user portal! {{user.username}}</h1>
+    <a href="/lists/new/{{user.id}}" class="btn btn-primary">Create a list</a>
+    <a href="/category/new" class="btn btn-info">New Category</a>
+    <a href="/users/{{user.id}}/update" class="btn btn-info">Update Account</a>
+    <a href="/users/{{user.id}}/delete" class="btn btn-danger">Delete Account</a>
+    {%for list in user.user_lists%}
+        <p><a href='/lists/{{list.id}}'>{{list.name}}</a></p>
+    {%endfor%}
+{% endblock %}

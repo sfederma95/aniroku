@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}All Anime Genres{% endblock %}
+{% block content %}
+    <h1>Find good anime recommendations based on genre!</h1>
+    {%for (name,id) in genres.items()%}
+        <p><a class='genre' href='/genres/{{id}}'>{{name}}</a></p>
+    {%endfor%}
+    <a href="/login" class="btn btn-primary">Login</a>
+    <a href="/signup" class="btn btn-primary">Sign Up</a>
+    
+    
+    
+    <div class="waitpage" id="waitpage" style="display: none;">
+        <div class="waitpage-box">
+            <p>
+                <img alt="(Loading)" src="https://media.giphy.com/media/3o7bu3XilJ5BOiSGic/giphy.gif">
+                <span>Please Wait...</span>
+            </p>
+        </div>
+    </div>
+{% endblock %}

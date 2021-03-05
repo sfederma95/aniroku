@@ -1,0 +1,41 @@
+.waitpage {
+	background: url(../images/blockUI.png) repeat scroll 0 0 rgba(0, 0, 0, 0);
+	height: 100%;
+	left: 0;
+	overflow: hidden;
+	position: fixed;
+	top: 0;
+	width: 100%;
+	z-index: 999;
+}
+
+.waitpage-box {
+	background: none repeat scroll center center black;
+	border: 1px solid #999;
+	border-radius: 5px 5px 5px 5px;
+	box-shadow: 0 1px 4px 0 #666;
+	left: 44%;
+	overflow: auto;
+	padding: 16px;
+	position: fixed;
+	text-align: center;
+	top: 46%;
+	z-index: 99999;
+}
+.waitpage-box p img {
+	color: #d0622b;
+	float: left;
+	font-size: 14px;
+	font-style: italic;
+	font-weight: bold;
+	height: 30px;
+	width: 30px;
+}
+.waitpage-box p span {
+	color: white;
+	float: left;
+	font-size: .8125em;
+	font-weight: bold;
+	padding: 6px 0 0 12px;
+	white-space: nowrap;
+}
