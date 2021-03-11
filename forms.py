@@ -64,3 +64,8 @@ class UpdateUserForm(FlaskForm):
     email = StringField('Your new e-mail', validators=[Optional(), Email()])
     avatar_url = StringField('Your new avatar URL',
                              validators=[URL(), Optional()])
+
+class AddAnimeForm(FlaskForm):
+    anime = SelectField('Anime to be added', coerce=int)
+    list_id = SelectField('List to be added to', coerce=int)
+

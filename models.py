@@ -85,6 +85,7 @@ class Comment(db.Model):
     text = db.Column(db.Text,nullable=False, default='No comment by owner.')
     username = db.Column(db.Text, db.ForeignKey(
         'users.username',ondelete='SET NULL'), nullable=True)
+    # spoiler = db.Column(db.Boolean,nullable=False)
 
 class Category(db.Model):
     __tablename__='categories'

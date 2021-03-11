@@ -3,18 +3,39 @@
 
 {% block content %}
 <h1>{{anime_genre['mal_url']['name']}}:</h1>
-<div class='container-fluid'>
-    <div class='row'>
-    {%for anime in anime_genre['anime'][:40]%}
-    <div class="card mb-3 col-3">
-        <img style='max-height:250px;' src="{{anime['image_url']}}">
-        <div class="card-body">
-            <h5 class="card-title">{{anime['title']}}</h5>
-            <p class="card-text">{{anime['synopsis']}}</p>
-            <a href='{{anime["url"]}}' class="card-text"><small class="text-muted">More Info</small></a>
+{%if current_user.is_active != False%}
+      <form method="POST" action="/genres/{{anime_genre['mal_url']['mal_id']}}/add">
+        {{ form.hidden_tag() }}
+        {% for field in form if field.widget.input_type != 'hidden' %}
+          {% for error in field.errors %}
+            <span class="text-danger">{{ error }}</span>
+          {% endfor %}
+          {{ field(placeholder=field.label.text, class="form-control") }}
+        {% endfor %}
+        <button id='add-anime' class="btn btn-primary btn-lg btn-block">Add!</button>
+      </form>
+    <button class="btn btn-warning btn-lg btn-block"><a href='/my-lists/{{current_user.id}}'>I'm done!</a></button>
+    {%endif%}
+  <div class='container-fluid'>
+      <div class='row'>
+      {%for anime in anime_genre['anime'][:20]%}
+      <div class="card mb-3 col-3">
+          <img style='max-height:250px;' src="{{anime['image_url']}}">
+          <div class="card-body">
+              <h5 class="card-title"><a href='/{{anime.mal_id}}/recommendations'>{{anime['title']}}</a></h5>
+              <a href="{{anime['url']}}" class="card-text"><small class="text-muted">Link</small></a>
+          </div>
+      </div>
+      {%endfor%}
+      </div>
+      </div>
+      
+    <div class="waitpage" id="waitpage" style="display: none;">
+        <div class="waitpage-box">
+            <p>
+                <img alt="(Loading)" src="https://media.giphy.com/media/3o7bu3XilJ5BOiSGic/giphy.gif">
+                <span>Please Wait...</span>
+            </p>
         </div>
-    </div>
-    {%endfor%}
-    </div>
     </div>
 {% endblock %}

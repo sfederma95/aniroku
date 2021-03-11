@@ -7,7 +7,14 @@
         <p>{{suggestion.comment}}</p>
         <a href='{{suggestion.mal_url}}'>Link</a>
         <p>-- by {{suggestion.username}}</p>
+        <form method="POST" action="/suggestions/{{suggestion.id}}/add-to-list">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            <input type="hidden" name="anime-id" value="{{suggestion.anime_id}}">
+            <input type="hidden" name="list-id" value="{{curr_list.id}}">
+            <button class="btn btn-primary">Add</button>
+        </form>
         <form method="POST" action="/suggestions/{{suggestion.id}}/remove">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             <button class="btn btn-danger">Delete</button>
         </form>
     {%endfor%}

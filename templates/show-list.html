@@ -47,8 +47,10 @@
     <div class='comments'>
     <p>Comments:</p>
     {%for comment in entry.entry_comments%}
+    {%if comment.text != 'No comment by owner.'%}
     <p>{{comment.text}}</p>
     <p>-- {{comment.username}}</p>
+    {%endif%}
     {%endfor%}
     </div>
     {%if current_user.is_active != False%}
