@@ -39,3 +39,9 @@
 	padding: 6px 0 0 12px;
 	white-space: nowrap;
 }
+
+p.spoiler {
+	filter: blur(3px);
+}
+
+

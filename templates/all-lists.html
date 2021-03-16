@@ -4,7 +4,7 @@
     <h1>Check out all the cool lists already out there!</h1>
     {%for list in lists%}
         <p><a href='/lists/{{list.id}}'>{{list.name}}</a></p>
-        <p>-- by {{list.users.username}}</p>
+        <p>-- by <a href='/{{list.users.id}}/lists'>{{list.users.username}}</a></p>
     {%endfor%}
     <a href="/login" class="btn btn-primary">Login</a>
     <a href="/signup" class="btn btn-primary">Sign Up</a>

@@ -1,27 +1,28 @@
-from secrets import SECRET_KEY, DATABASE_URL
-from flask import Flask, render_template, request, flash, redirect, session
+from flask import Flask, render_template, request, flash, redirect, session, abort
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 import requests
 from flask_bcrypt import Bcrypt
 from genres import jikan_genres
-from funcs import get_anime_info, byRating, standardize
+from funcs import get_anime_info, byRating, standardize, send_email, make_list_entry, send_anime_recommendation, invalid_signup
+from funcs import app_funcs
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from flask_wtf.csrf import CSRFProtect
 from profanity_filter import ProfanityFilter
 import spacy
+from flask_mail import Mail, Message
+from sqlalchemy import and_
+from rake_nltk import Rake
 
 from forms import NewUserForm, LoginForm, ListForm, ListUpdateForm, AnimeEntryForm, CategoryForm, SuggestionForm, DeleteUserForm, UpdateUserForm, AddAnimeForm
 from models import db, connect_db, User, List, List_Entry, Comment, Category, Suggestion
 
 app = Flask(__name__)
+app.config.from_pyfile('config.py')
+app.register_blueprint(app_funcs)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
+mail=Mail(app)
 
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_ECHO'] = False
-app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
-app.config['SECRET_KEY'] = SECRET_KEY
 toolbar = DebugToolbarExtension(app)
 csrf = CSRFProtect(app)
 bcrypt = Bcrypt()
@@ -37,6 +38,8 @@ pf = ProfanityFilter()
 nlp = spacy.load('en')
 profanity_filter = ProfanityFilter(nlps={'en': nlp})  
 nlp.add_pipe(profanity_filter.spacy_component, last=True)
+
+r = Rake(max_length=1)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -69,16 +72,11 @@ def user_signup():
             )
                 db.session.commit()
                 login_user(user)
+                send_email(f'Welcome to Aniroku, {user.username}!', user.email, 'Create fun lists to share with your friends!')
                 return redirect(f"/my-lists/{user.id}")
             except IntegrityError:
                 db.session.rollback()
-                if User.query.filter(User.username == form.username.data).first() and User.query.filter(User.email == form.email.data).first():
-                    flash("Username already taken", 'danger')
-                    flash("Email is associated with another account", 'danger')
-                elif User.query.filter(User.email == form.email.data).first():
-                    flash("Email is associated with another account", 'danger')
-                else:
-                    flash("Username already taken", 'danger')
+                invalid_signup(form.username.data,form.email.data)
     return render_template('signup.html', form=form)
 
 
@@ -121,6 +119,7 @@ def create_list(user_id):
                         description=form.description.data, user_id=user.id)
                 db.session.add(new_list)
                 db.session.commit()
+                flash("List created successfully!", "success")
                 return redirect(f"/my-lists/{user.id}")
             except IntegrityError:
                 db.session.rollback()
@@ -158,6 +157,7 @@ def update_list(list_id):
                 curr_list.description = form.description.data or curr_list.description
                 db.session.add(curr_list)
                 db.session.commit()
+                flash("Your list was updated successfully!", "success")
                 return redirect(f'/lists/{curr_list.id}')
             except:
                 db.session.rollback()
@@ -174,7 +174,7 @@ def add_to_list(list_id):
     search = request.args.get('q')
     form = AnimeEntryForm()
     form.categories.choices = [(c.name, c.name)
-                              for c in Category.query.all()]
+                              for c in Category.query.all()] or [('None','None')]
     if not search:
         anime=None
     else:
@@ -184,24 +184,12 @@ def add_to_list(list_id):
         form.anime.choices = [(a['mal_id'], a['title'])
                               for a in anime['results']]
     if form.validate_on_submit():
-        anime_info = get_anime_info(form.anime.data)
-        if pf.is_profane(form.comments.data) == True:
-            flash('Please avoid using profanity!','danger')
+        already_on_list = List_Entry.query.filter(and_(List_Entry.anime_id==form.anime.data, List_Entry.list_id==curr_list.id)).first()
+        if already_on_list:
+            flash("This anime is already on your list!", "danger")
         else:
-            try:
-                entry = List_Entry(list_id=curr_list.id, anime_id=form.anime.data,
-                           rating=form.rating.data or 0, anime_title=anime_info['anime_title'],
-                           anime_img_url=anime_info['anime_img_url'],anime_type=anime_info['anime_type'],
-                           anime_genres=anime_info['anime_genres'], categories=form.categories.data)
-                db.session.add(entry)
-                db.session.commit()
-                comment = Comment(entry_id=entry.id, entry_owner=True, text=form.comments.data or 'No comment by owner.', username=curr_list.users.username)
-                db.session.add(comment)
-                db.session.commit()
-                return redirect(f'/lists/{curr_list.id}/add')
-            except IntegrityError:
-                db.session.rollback()
-                flash("This anime is already on your list!", "danger")
+            make_list_entry(form.anime.data,curr_list.id,form.rating.data,form.categories.data)
+            flash("This anime has been added to your list!", "success")
     return render_template('list-addition.html', form=form, curr_list=curr_list, anime=anime)
 
 @app.route('/<list_id>/<entry_id>/remove',methods=['POST'])
@@ -214,6 +202,7 @@ def remove_from_list(list_id,entry_id):
         return redirect("/login")
     db.session.delete(entry)
     db.session.commit()
+    flash("This title was removed from your list!", "success")
     return redirect(f'/lists/{curr_list.id}')
 
 @app.route('/<list_id>/<entry_id>/update',methods=['POST'])
@@ -229,6 +218,7 @@ def update_entry(list_id,entry_id):
     entry.rating = request.form['rating'] or entry.rating
     db.session.add(entry)
     db.session.commit()
+    flash("Your entry has been updated!", "success")
     return redirect(f'/lists/{curr_list.id}')
 
 @app.route('/lists/<list_id>/delete',methods=['POST'])
@@ -240,6 +230,7 @@ def delete_list(list_id):
         return redirect("/login")
     db.session.delete(curr_list)
     db.session.commit()
+    flash("Your list was deleted successfully!", "success")
     return redirect(f'/my-lists/{curr_list.users.id}')
 
 @app.route('/genres')
@@ -247,7 +238,7 @@ def get_all_genres():
     genres = jikan_genres
     return render_template('all-genres.html',genres=genres)
 
-@app.route('/genres/<genre_id>')
+@app.route('/genres/<genre_id>', methods=['GET','POST'])
 def get_genre_by_id(genre_id):
     form = AddAnimeForm()
     resp = requests.get(f'https://api.jikan.moe/v3/genre/anime/{genre_id}')
@@ -256,66 +247,43 @@ def get_genre_by_id(genre_id):
         form.anime.choices = [(a['mal_id'], a['title'])
                               for a in anime_genre['anime'][:20]]
         form.list_id.choices=[(l.id,l.name) for l in current_user.user_lists]
+    if form.validate_on_submit():
+        curr_list = List.query.get_or_404(form.list_id.data)
+        if current_user.id != curr_list.users.id:
+            flash("Access unauthorized.", "danger")
+            return redirect("/login")
+        already_on_list = List_Entry.query.filter(and_(List_Entry.anime_id==form.anime.data, List_Entry.list_id==curr_list.id)).first()
+        if already_on_list:
+            flash("This anime is already on your list!", "danger")
+        else:
+            make_list_entry(form.anime.data,curr_list.id,rating=0,categories=None)
+            flash("This anime has been added to your list!", "success")
     return render_template('show-genre.html',anime_genre=anime_genre, form=form)
 
-@app.route('/genres/<genre_id>/add', methods=['POST'])
-@login_required
-def add_from_genres(genre_id):
-    form=AddAnimeForm()
-    curr_list = List.query.get_or_404(form.list_id.data)
-    if current_user.id != curr_list.users.id:
-        flash("Access unauthorized.", "danger")
-        return redirect("/login")
-    anime_info = get_anime_info(form.anime.data)
-    try:
-        entry = List_Entry(list_id=curr_list.id, anime_id=form.anime.data,
-                           rating=0, anime_title=anime_info['anime_title'],
-                           anime_img_url=anime_info['anime_img_url'],anime_type=anime_info['anime_type'],
-                           anime_genres=anime_info['anime_genres'])
-        db.session.add(entry)
-        db.session.commit()
-        flash("Added successfully!", "success")
-        return redirect(f'/genres/{genre_id}')
-    except IntegrityError:
-        db.session.rollback()
-        flash("This anime is already on your list!", "danger")
-        return redirect(f'/genres/{genre_id}')
-
-@app.route('/<anime_id>/recommendations')
+@app.route('/<anime_id>/recommendations', methods=['GET','POST'])
 def get_recommendations(anime_id):
     form = AddAnimeForm()
     resp = requests.get(f'https://api.jikan.moe/v3/anime/{anime_id}/recommendations')
-    this_anime = get_anime_info(anime_id)
     recommendations = resp.json()
+    if recommendations['recommendations'] == []:
+        abort(404)
+    curr_title = request.args.get('t')
     if current_user.get_id()!=None:
         form.anime.choices = [(a['mal_id'], a['title'])
                               for a in recommendations['recommendations']]
         form.list_id.choices=[(l.id,l.name) for l in current_user.user_lists]
-    return render_template('show-recommended.html',recommendations=recommendations, form=form, this_anime=this_anime)
-
-@app.route('/recommendations/add', methods=['POST'])
-@login_required
-def add_from_recommendations():
-    form=AddAnimeForm()
-    curr_list = List.query.get_or_404(form.list_id.data)
-    if current_user.id != curr_list.users.id:
-        flash("Access unauthorized.", "danger")
-        return redirect("/login")
-    anime_info = get_anime_info(form.anime.data)
-    try:
-        entry = List_Entry(list_id=curr_list.id, anime_id=form.anime.data,
-                           rating=0, anime_title=anime_info['anime_title'],
-                           anime_img_url=anime_info['anime_img_url'],anime_type=anime_info['anime_type'],
-                           anime_genres=anime_info['anime_genres'])
-        db.session.add(entry)
-        db.session.commit()
-        flash("Added successfully!", "success")
-        return redirect(f'/lists/{curr_list.id}')
-    except IntegrityError:
-        db.session.rollback()
-        flash("This anime is already on your list!", "danger")
-        return redirect(f'/{request.form["anime-id"]}/recommendations')
-
+    if form.validate_on_submit():
+        curr_list = List.query.get_or_404(form.list_id.data)
+        if current_user.id != curr_list.users.id:
+            flash("Access unauthorized.", "danger")
+            return redirect("/login")
+        already_on_list = List_Entry.query.filter(and_(List_Entry.anime_id==form.anime.data, List_Entry.list_id==curr_list.id)).first()
+        if already_on_list:
+            flash("This anime is already on your list!", "danger")
+        else:
+            make_list_entry(form.anime.data,curr_list.id,rating=0,categories=None)
+            flash("This anime has been added to your list!", "success")
+    return render_template('show-recommended.html',recommendations=recommendations, form=form, curr_title=curr_title)
 
 @app.route('/category/new', methods=['GET', 'POST'])
 @login_required
@@ -331,6 +299,7 @@ def create_category():
                 category = Category(name=category_name)
                 db.session.add(category)
                 db.session.commit()
+                flash("Your category was added successfully!", "success")
                 return redirect(f"/my-lists/{current_user.id}")
             except IntegrityError:
                 db.session.rollback()
@@ -358,13 +327,8 @@ def make_suggestion(list_id):
         if pf.is_profane(form.comment.data) == True:
             flash('Please avoid using profanity!','danger')
         else:
-            resp2 = requests.get(f'https://api.jikan.moe/v3/anime/{form.anime.data}/')
-            anime_by_id = resp2.json()
-            suggestion=Suggestion(list_id=curr_list.id,anime_id=form.anime.data,
-            anime_title=anime_by_id['title'],mal_url=anime_by_id['url'],
-            comment=form.comment.data or 'No comment from suggester.', username=current_user.username)
-            db.session.add(suggestion)
-            db.session.commit()
+            send_anime_recommendation(anime,form.anime.data,form.comment.data,current_user.username,curr_list)
+            flash(f'{curr_list.users.username} will see your recommendation in their inbox!','success')
             return redirect(f'/lists/{curr_list.id}')
     return render_template('suggest-form.html',form=form,curr_list=curr_list,anime=anime)
 
@@ -385,21 +349,15 @@ def add_from_inbox(suggestion_id):
     if current_user.id != curr_list.users.id:
         flash("Access unauthorized.", "danger")
         return redirect("/login")
-    anime_info = get_anime_info(request.form['anime-id'])
-    try:
-        entry = List_Entry(list_id=curr_list.id, anime_id=anime_info['anime_id'],
-                           rating=0, anime_title=anime_info['anime_title'],
-                           anime_img_url=anime_info['anime_img_url'],anime_type=anime_info['anime_type'],
-                           anime_genres=anime_info['anime_genres'])
-        db.session.add(entry)
+    already_on_list = List_Entry.query.filter(and_(List_Entry.anime_id==request.form['anime-id'], List_Entry.list_id==curr_list.id)).first()
+    if already_on_list:
+        flash("This anime is already on your list!", "danger")
+    else:
+        make_list_entry(request.form['anime-id'],curr_list.id,rating=0,categories=None)
         db.session.delete(suggestion)
         db.session.commit()
-        flash("Added successfully!", "success")
-        return redirect(f'/{curr_list.id}/suggestion-inbox')
-    except IntegrityError:
-        db.session.rollback()
-        flash("This anime is already on your list!", "danger")
-        return redirect(f'/{curr_list.id}/suggestion-inbox')
+        flash("This anime has been added to your list!", "success")
+    return redirect(f'/{curr_list.id}/suggestion-inbox')
 
 @app.route('/suggestions/<suggestion_id>/remove',methods=['POST'])
 @login_required
@@ -410,6 +368,7 @@ def delete_suggestion(suggestion_id):
         return redirect("/login")
     db.session.delete(suggestion)
     db.session.commit()
+    flash("Deleted successfully!", "success")
     return redirect(f'/{suggestion.lists.id}/suggestion-inbox')
 
 @app.route('/<list_id>/<entry_id>/add-comment',methods=['POST'])
@@ -426,9 +385,15 @@ def new_comment(list_id,entry_id):
             entry_owner = True
         else:
             entry_owner = False
-        comment = Comment(entry_id=entry.id,text=comment_data,username=current_user.username,entry_owner=entry_owner)
+        if request.form.get('spoiler') == None:
+            spoiler = False
+        else:
+            spoiler = True
+        comment = Comment(entry_id=entry.id,text=comment_data,username=current_user.username,entry_owner=entry_owner,spoiler=spoiler, user_id=current_user.id)
         db.session.add(comment)
         db.session.commit()
+        flash("Posted!", "success")
+        send_email('You have a new discussion comment!',curr_list.users.email,f'Check out your comments: {comment.text} --by {comment.username}')
     return redirect(f'/lists/{curr_list.id}')
 
 @app.route('/users/<user_id>/delete', methods=['GET', 'POST'])
@@ -445,6 +410,7 @@ def delete_user(user_id):
             db.session.delete(user)
             db.session.commit()
             logout_user()
+            flash("Sorry to see you go! Your account has been successfully deleted", "success")
             return redirect('/')
         flash("Invalid credentials.", 'danger')
     return render_template('delete-user.html', form=form)
@@ -468,6 +434,7 @@ def update_user(user_id):
                     curr_user.password = hashed_pass or curr_user.password
                 db.session.add(curr_user)
                 db.session.commit()
+                flash("Your account was updated successfully!", "success")
                 return redirect(f'/my-lists/{curr_user.id}')
             except IntegrityError:
                 db.session.rollback()

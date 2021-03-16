@@ -1,19 +1,20 @@
+1. make a custom 404 page
 1. figure out commenting -- done
     -update original comment? -- done, hidden rather than update
 2. forms not validated for entry update and commenting currently -- done
 3. remove filters button -- done
 4. from recommendations page what list would you like to save to? -- done
 5. send email notifications
+13. CSRF token is active on all forms, check on this -- done
 6. delete user -- done
 7. update user -- done
     -integrity error updating email -- done
 8. add anime from suggestion box & genres page? -- done
+14. takes too long to let you know an anime is already on your list -- done
 9. refactor app.py
 10. what if users use bad words? -- done
-11. what if users are adding spoilers?
+11. what if users are adding spoilers? -- done
 12. styles
-13. CSRF token is active on all forms, check on this
-14. takes too long to let you know an anime is already on your list
 15. testing
 
 hours: 26 hours

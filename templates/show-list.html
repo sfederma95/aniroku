@@ -14,6 +14,7 @@
         <a href="/lists/{{curr_list.id}}/add" class="btn btn-primary">Add to list</a>
         <a href="/lists/{{curr_list.id}}/update" class="btn btn-warning">Update Details</a>
         <form action='/lists/{{curr_list.id}}/delete' method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <button class="btn btn-danger">Delete</button>
         </form>
     {%endif%}
@@ -22,7 +23,7 @@
     <p>-- by {{curr_list.users.username}}</p>
     {%for entry in curr_list.list_entries%}
     <div class='listed-anime {{curr_list.list_entries.index(entry)}}'>
-    <p>anime title:<a class='recommended' href='/{{entry.anime_id}}/recommendations'>{{entry.anime_title}}</a></p>
+    <p>anime title:<a class='recommended' href='/{{entry.anime_id}}/recommendations?t={{entry.anime_title}}'>{{entry.anime_title}}</a></p>
     {%if current_user.id == curr_list.users.id%}
     <div class='update'>
     <button class="btn btn-warning update-button {{curr_list.list_entries.index(entry)}}">Update entry</button>
@@ -41,16 +42,20 @@
     <button class="btn btn-info cancel-entry-update" hidden>Cancel</button>
     </div>
     <form method="POST" action="/{{curr_list.id}}/{{entry.id}}/remove">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <button class="btn btn-danger">Remove entry</button>
     </form>
     {%endif%}
     <div class='comments'>
     <p>Comments:</p>
     {%for comment in entry.entry_comments%}
-    {%if comment.text != 'No comment by owner.'%}
-    <p>{{comment.text}}</p>
-    <p>-- {{comment.username}}</p>
-    {%endif%}
+    <div class="comment">
+        {%if comment.spoiler==True%}
+        <span class='badge bg-danger spoiler-toggle'>Spoiler</span>
+        {%endif%}
+        <p class="{{'spoiler to-toggle' if comment.spoiler==True else ''}}">{{comment.text}}</p>
+        <p>-- <a href='/{{comment.user_id}}/lists'>{{comment.username}}</a></p>
+    </div>
     {%endfor%}
     </div>
     {%if current_user.is_active != False%}
@@ -58,6 +63,8 @@
     <button class='btn btn-primary comment-button'>Add Comment</button>
     <form class='add-comment' method="POST" action="/{{curr_list.id}}/{{entry.id}}/add-comment" hidden>
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <input type="checkbox" name="spoiler" value="True">
+        <label for="spoiler"> Is this a spoiler?</label><br>
         <label for='comment'>Your comment:</label>
         <p><input name='comment' type="text" required></p>
         <button class="btn btn-primary btn-lg btn-block">Add Comment!</button>

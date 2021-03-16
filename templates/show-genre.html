@@ -4,7 +4,7 @@
 {% block content %}
 <h1>{{anime_genre['mal_url']['name']}}:</h1>
 {%if current_user.is_active != False%}
-      <form method="POST" action="/genres/{{anime_genre['mal_url']['mal_id']}}/add">
+      <form method="POST">
         {{ form.hidden_tag() }}
         {% for field in form if field.widget.input_type != 'hidden' %}
           {% for error in field.errors %}
@@ -22,7 +22,7 @@
       <div class="card mb-3 col-3">
           <img style='max-height:250px;' src="{{anime['image_url']}}">
           <div class="card-body">
-              <h5 class="card-title"><a href='/{{anime.mal_id}}/recommendations'>{{anime['title']}}</a></h5>
+              <h5 class="card-title"><a href='/{{anime.mal_id}}/recommendations?t={{anime["title"]}}'>{{anime['title']}}</a></h5>
               <a href="{{anime['url']}}" class="card-text"><small class="text-muted">Link</small></a>
           </div>
       </div>

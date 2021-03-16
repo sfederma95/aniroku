@@ -35,8 +35,6 @@ class ListUpdateForm(FlaskForm):
 
 class AnimeEntryForm(FlaskForm):
     anime = SelectField('Anime to be added', coerce=int)
-    comments = TextAreaField('Your thoughts on this anime', validators=[
-                             Optional(), Length(max=80)])
     rating = IntegerField('Your personal rating', validators=[
                           Optional(), NumberRange(min=1, max=10)])
     categories =SelectMultipleField('Categories to assign', coerce=str)

@@ -1,11 +1,23 @@
 {% extends 'base.html' %}
 {% block title %}Homepage{% endblock %}
 {% block content %}
-    <h1>Welcome to Aniroku</h1>
-    <p>Sign up now to start creating your lists!</p>
-    <p>Or log in to view and edit your lists</p>
-    <a href="/signup" class="btn btn-primary">Sign up</a>
-    <a href="/login" class="btn btn-primary">Login</a>
-    <p>Don't want to sign up right now? No worries! You can view all Aniroku lists without ever signing up!</p>
-    <a href="/lists" class="btn btn-primary">All the lists</a>
+<div class='container mt-5'>
+    <div class='jumbotron row mx-auto border'>
+        <h1 class='display-1 col-12 text-center pb-4 border-bottom'>Welcome to Aniroku</h1>
+        <div class='col my-auto text-center border-right pt-2'>
+            <h5 class='display-5'>What do I do next?</h4>
+            <p>Sign up now to start creating your own anime lists!</p>
+            <p>Or log in to view and edit your lists.</p>
+            <a href="/signup" class="btn btn-primary">Signup</a>
+            <a href="/login" class="btn btn-primary">Login</a>
+        </div>
+        <div class='col my-auto text-center border-left'>
+            <h5 class='display-5'>Just give me the anime...</h4>
+            <p>Don't want to sign up right now? No worries!</p>
+            <p>You can view all Aniroku lists without ever signing up!</p>
+            <a href="/lists" class="btn btn-primary">All the lists</a>
+        </div>
+    </div>
+    <div>this season's anime</div>
+</div>
 {% endblock %}

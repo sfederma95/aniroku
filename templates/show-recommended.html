@@ -2,9 +2,9 @@
 {% block title %}Recommended{% endblock %}
 
 {% block content %}
-    <h1>Recommended animes based on: {{this_anime['anime_title']}}</h1>
+  <h1>Recommended animes based on {{curr_title}}:</h1>
   {%if current_user.is_active != False%}
-      <form method="POST" action="/recommendations/add">
+      <form method="POST">
         {{ form.hidden_tag() }}
         {% for field in form if field.widget.input_type != 'hidden' %}
           {% for error in field.errors %}
@@ -12,7 +12,6 @@
           {% endfor %}
           {{ field(placeholder=field.label.text, class="form-control") }}
         {% endfor %}
-        <input type='hidden' name='anime-id' value="{{this_anime['anime_id']}}">
         <button id='add-anime' class="btn btn-primary btn-lg btn-block">Add!</button>
       </form>
     <button class="btn btn-warning btn-lg btn-block"><a href='/my-lists/{{current_user.id}}'>I'm done!</a></button>
@@ -23,14 +22,13 @@
       <div class="card mb-3 col-3">
           <img style='max-height:250px;' src="{{anime['image_url']}}">
           <div class="card-body">
-              <h5 class="card-title"><a href='/{{anime.mal_id}}/recommendations'>{{anime['title']}}</a></h5>
+              <h5 class="card-title"><a href='/{{anime.mal_id}}/recommendations?t={{anime["title"]}}'>{{anime['title']}}</a></h5>
               <a href="{{anime['url']}}" class="card-text"><small class="text-muted">Link</small></a>
           </div>
       </div>
       {%endfor%}
       </div>
-      </div>
-  
+      </div>  
   
       
     <div class="waitpage" id="waitpage" style="display: none;">

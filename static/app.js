@@ -61,3 +61,7 @@ $('button.cancel-comment').on('click', function() {
 $('#clear-filter').on('click', function() {
 	$('.listed-anime').attr('hidden', false);
 });
+
+$('.spoiler-toggle').on('click', function() {
+	$(this).next().toggleClass('spoiler');
+});

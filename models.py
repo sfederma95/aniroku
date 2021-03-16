@@ -71,6 +71,7 @@ class List_Entry(db.Model):
     anime_title = db.Column(db.Text, nullable=False)
     anime_img_url = db.Column(db.Text, nullable=False)
     anime_type = db.Column(db.Text, nullable=False)
+    anime_synopsis = db.Column(db.Text, nullable=False)
     anime_genres = db.Column(db.ARRAY(db.String),nullable=False)
     categories = db.Column(db.ARRAY(db.String),nullable=True)
     rating = db.Column(db.Integer)
@@ -85,7 +86,9 @@ class Comment(db.Model):
     text = db.Column(db.Text,nullable=False, default='No comment by owner.')
     username = db.Column(db.Text, db.ForeignKey(
         'users.username',ondelete='SET NULL'), nullable=True)
-    # spoiler = db.Column(db.Boolean,nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey(
+        'users.id',ondelete='SET NULL'), nullable=True)
+    spoiler = db.Column(db.Boolean,nullable=False)
 
 class Category(db.Model):
     __tablename__='categories'
