@@ -1,96 +1,144 @@
 {% extends 'base.html' %}
 {% block title %}All Anime Lists{% endblock %}
 {% block content %}
-    {%for category in categories%}
-    <button class='btn btn-success category-select' id='{{category}}'>{{category}}</button>
-    {%endfor%}
-    <button class='btn btn-success' id='clear-filter'>Clear filters</button>
-    {%if (current_user.id != curr_list.users.id) and (current_user.is_active != False)%}
-    <a href="/{{curr_list.id}}/suggestions" class="btn btn-primary">Suggest an anime</a>
-    {%endif%}
-    <h1>Check out this cool list!</h1>
-    {%if current_user.id == curr_list.users.id%}
-        <a href="/{{curr_list.id}}/suggestion-inbox" class="btn btn-warning">Suggestion Inbox ({{curr_list.list_suggestions|length}})</a>
-        <a href="/lists/{{curr_list.id}}/add" class="btn btn-primary">Add to list</a>
-        <a href="/lists/{{curr_list.id}}/update" class="btn btn-warning">Update Details</a>
-        <form action='/lists/{{curr_list.id}}/delete' method="POST">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-        <button class="btn btn-danger">Delete</button>
-        </form>
-    {%endif%}
-    <p>{{curr_list.name}}</p>
-    <p>{{curr_list.description}}</p>
-    <p>-- by {{curr_list.users.username}}</p>
-    {%for entry in curr_list.list_entries%}
-    <div class='listed-anime {{curr_list.list_entries.index(entry)}}'>
-    <p>anime title:<a class='recommended' href='/{{entry.anime_id}}/recommendations?t={{entry.anime_title}}'>{{entry.anime_title}}</a></p>
-    {%if current_user.id == curr_list.users.id%}
-    <div class='update'>
-    <button class="btn btn-warning update-button {{curr_list.list_entries.index(entry)}}">Update entry</button>
-    <form class='update-entry' method="POST" action="/{{curr_list.id}}/{{entry.id}}/update" hidden>
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-        <label for='rating'>Your new rating:</label>
-        <p><input name='rating' type="number" max=10 min=1 placeholder='1'></p>
-        {%for category in all_categories%}
-        <div>
-            {{category.name}}:
-            <input type="checkbox" name="categories" value='{{category.name}}'>
-          </div>
-        {%endfor%}
-        <button class="btn btn-primary btn-lg btn-block">Update!</button>
-    </form>
-    <button class="btn btn-info cancel-entry-update" hidden>Cancel</button>
-    </div>
-    <form method="POST" action="/{{curr_list.id}}/{{entry.id}}/remove">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-        <button class="btn btn-danger">Remove entry</button>
-    </form>
-    {%endif%}
-    <div class='comments'>
-    <p>Comments:</p>
-    {%for comment in entry.entry_comments%}
-    <div class="comment">
-        {%if comment.spoiler==True%}
-        <span class='badge bg-danger spoiler-toggle'>Spoiler</span>
-        {%endif%}
-        <p class="{{'spoiler to-toggle' if comment.spoiler==True else ''}}">{{comment.text}}</p>
-        <p>-- <a href='/{{comment.user_id}}/lists'>{{comment.username}}</a></p>
-    </div>
-    {%endfor%}
-    </div>
-    {%if current_user.is_active != False%}
-    <div class='add-comment'>
-    <button class='btn btn-primary comment-button'>Add Comment</button>
-    <form class='add-comment' method="POST" action="/{{curr_list.id}}/{{entry.id}}/add-comment" hidden>
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-        <input type="checkbox" name="spoiler" value="True">
-        <label for="spoiler"> Is this a spoiler?</label><br>
-        <label for='comment'>Your comment:</label>
-        <p><input name='comment' type="text" required></p>
-        <button class="btn btn-primary btn-lg btn-block">Add Comment!</button>
-    </form>
-    <button class="btn btn-info cancel-comment" hidden>Cancel</button>
-    </div>
-    {%endif%}
-    <p>Your Rating:{{entry.rating}}</p>
-    <p>Type:{{entry.anime_type}}</p>
-    {%if entry.categories%}
-    {%for category in entry.categories%}
-    <span class='{{category}}'>{{category}}</span>
-    {%endfor%}
-    {%endif%}
-    {%for genre in entry.anime_genres%}
-        <span><a class='genre' href="/genres/{{genres[genre]}}">{{genre}}</a></span>
-    {%endfor%}
-</div>
-
-    {%endfor%}
-    <div class="waitpage" id="waitpage" style="display: none;">
-        <div class="waitpage-box">
-            <p>
-                <img alt="(Loading)" src="https://media.giphy.com/media/3o7bu3XilJ5BOiSGic/giphy.gif">
-                <span>Please Wait...</span>
-            </p>
+<div class='container mt-5 mb-5'>
+    <div class='jumbotron mx-auto border'>
+        <h1 class='display-2'>{{curr_list.name}}</h1>
+        <p class='lead'>{{curr_list.description}}</p>
+        <div class="btn-group dropdown mr-1 mt-2 list-buttons">
+            <button type="button" class="btn dropdown-toggle list-buttons-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Actions
+            </button>
+            <div class="dropdown-menu">
+                {%if current_user.id == curr_list.users.id%}
+                <a href="/{{curr_list.id}}/suggestion-inbox" class="dropdown-item list-buttons-a">Inbox <span class="badge badge-dark">{{curr_list.list_suggestions|length}}</span></a>
+                <a href="/lists/{{curr_list.id}}/add" class="dropdown-item list-buttons-a">Add to list</a>
+                <a href="/lists/{{curr_list.id}}/update" class="dropdown-item list-buttons-a">Update Details</a>
+                <div class="dropdown-divider"></div>
+                <form action='/lists/{{curr_list.id}}/delete' method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <button class="dropdown-item perm-danger-btn">Delete</button>
+                </form>
+                {%elif (current_user.id != curr_list.users.id) and (current_user.get_id() != None)%}
+                <a href="/{{curr_list.id}}/suggestions" class="dropdown-item">Suggest an anime</a>
+                {%else%}
+                <a href='/signup' class='dropdown-item'>Signup for more</a>
+                {%endif%}
+            </div>
+        </div>
+        <div class='btn-group dropdown mt-2 list-buttons'>
+            <button type="button" class="btn dropdown-toggle list-buttons-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Filters
+              </button>
+              <div class="dropdown-menu">
+                {%for category in categories%}
+                <button class='dropdown-item category-select list-buttons-a' id='{{category}}'>{{category}}</button>
+                {%endfor%}
+                <button class='dropdown-item perm-danger-btn' id='clear-filter'>Clear filters</button>
+              </div>
+        </div>
+        <div class="accordion mx-auto mt-4" id="anime-accord">
+            {%for anime in curr_list.list_entries%}
+            <div class="card listed-anime {{curr_list.list_entries.index(anime)}}">
+              <div class="card-header p-0" id="heading{{loop.index}}">
+                <h2 class="mb-0">
+                  <button class="btn btn-link btn-block text-left list-collapse" type="button" data-toggle="collapse" data-target="#collapse{{loop.index}}" aria-expanded="true" aria-controls="collapse{{loop.index}}">
+                    <img class='anime-icon' src='{{anime.anime_img_url}}'>
+                    <span class='show-title'>{{anime.anime_title}}</span>
+                    {%if anime.categories%}
+                    <div class='categories-div'>
+                        {%for category in anime.categories%}
+                        <span class='{{category}} badge badge-pill category-badges'>{{category}}</span>
+                        {%endfor%}
+                    </div>
+                    {%endif%}
+                    <span class='user-rating'>User rating: {{'?' if anime.rating == 0 else anime.rating}}</span>
+                  </button>
+                </h2>
+              </div>
+              <div id="collapse{{loop.index}}" class="collapse" aria-labelledby="heading{{loop.index}}" data-parent="#anime-accord">
+                <div class="card-body anime-details">
+                    <div class='genres-div'>
+                        <span class='mr-1'>Genres:</span>
+                        {%for genre in anime.anime_genres%}
+                        <a class='genre badge badge-pill category-badges' href="/genres/{{genres[genre]}}">{{genre}}</a>
+                        {%endfor%}
+                    </div>
+                    <form class='remove-entry-form' method="POST" action="/{{curr_list.id}}/{{anime.id}}/remove">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        <button class="btn btn-outline-danger remove-entry-btn">Remove Entry</button>
+                    </form>
+                    <p class='anime-type-p'>Type: {{anime.anime_type}}</p>
+                    <p>Synopsis: {{anime.anime_synopsis}}</p>
+                    <p>You may also like these titles: <a href='/{{anime.anime_id}}/recommendations?t={{anime.anime_title}}'>Link</a></p>
+                    {%if current_user.id == curr_list.users.id%}
+                    <div class='update'>
+                        <button class="btn btn-warning update-button {{curr_list.list_entries.index(anime)}}">Update entry</button>
+                        <form class='update-entry' method="POST" action="/{{curr_list.id}}/{{anime.id}}/update" hidden>
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                            <label for='rating'>Your new rating:</label>
+                            <p><input name='rating' type="number" max=10 min=1 placeholder='1'></p>
+                            {%for category in all_categories%}
+                            <div>
+                                {{category.name}}:
+                                <input type="checkbox" name="categories" value='{{category.name}}'>
+                            </div>
+                            {%endfor%}
+                            <button class="btn btn-primary btn-lg btn-block">Update!</button>
+                        </form>
+                    </div>
+                    {%endif%}
+                    <div class="accordion" id='comment-accord'>
+                        <div class="card">
+                          <div class="card-header" id="headingOne">
+                            <h2 class="mb-0">
+                              <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                View comments
+                              </button>
+                            </h2>
+                          </div>
+                          <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#comment-accord">
+                            <div class="card-body">
+                                <div class='comments'>
+                                    {%if not anime.entry_comments%}
+                                    <p class='lead'>Be the first to comment!</p>
+                                    {%endif%}
+                                    {%for comment in anime.entry_comments%}
+                                    <div class="comment">
+                                        {%if comment.spoiler==True%}
+                                        <span class='badge badge-pill badge-danger spoiler-toggle'>Spoiler</span>
+                                        {%endif%}
+                                        <p class="{{'spoiler to-toggle' if comment.spoiler==True else ''}}">{{comment.text}} -- <a href='/{{comment.user_id}}/lists'>{{comment.username}}</a></p>
+                                    </div>
+                                    {%endfor%}
+                                </div>
+                                {%if current_user.get_id()!=None%}
+                                <form class='add-comment' method="POST" action="/{{curr_list.id}}/{{anime.id}}/add-comment">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                    <input type="checkbox" name="spoiler" value="True">
+                                    <label for="spoiler"> Is this a spoiler?</label><br>
+                                    <label for='comment'>Your comment:</label>
+                                    <p><input name='comment' type="text" required></p>
+                                    <button class="btn btn-primary btn-lg btn-block">Add Comment!</button>
+                                </form>
+                                {%endif%}
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+              </div>
+            </div>
+            {%endfor%}
         </div>
     </div>
+</div>
+<div class="waitpage" id="waitpage" style="display: none;">
+    <div class="waitpage-box">
+        <p>
+            <img alt="(Loading)" src="https://media.giphy.com/media/3o7bu3XilJ5BOiSGic/giphy.gif">
+            <span>Please Wait...</span>
+        </p>
+    </div>
+</div>
 {% endblock %}

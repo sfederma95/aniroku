@@ -47,7 +47,9 @@ def load_user(user_id):
 
 @app.route('/')
 def homepage():
-    return render_template('home.html')
+    recent_picks = List_Entry.query.order_by(List_Entry.id.desc()).limit(10).all()
+    comments = Comment.query.order_by(Comment.id.desc()).limit(5).all()
+    return render_template('home.html', recent_picks=recent_picks, comments=comments)
 
 
 @app.route('/lists')

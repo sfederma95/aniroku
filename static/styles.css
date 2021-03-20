@@ -41,7 +41,198 @@
 }
 
 p.spoiler {
-	filter: blur(3px);
+	filter: blur(4px);
+}
+
+img{
+	height: 450px;
+	width: 300px;
+	margin: auto;
+}
+
+#carouselControls {
+	width: 350px;
 }
 
 
+body {
+	background-color: rgb(68, 68, 68);
+}
+
+#navbar {
+	background-color: #77815c;
+	box-shadow: 0 2px 4px -1px rgba(255, 255, 255, 0.26);
+	line-height: 0.75rem;
+}
+
+.list-item {
+	border: #c4d5c4 2px solid;
+	background-color: white;
+	height: 20%;
+	overflow: auto;
+}
+
+.list-item:hover {
+	background-color: rgb(68, 68, 68);
+	color: white;
+	border:rgb(68, 68, 68) 2px solid;
+}
+
+.home-buttons {
+	background-color: white;
+	border: #c4d5c4 solid 2px;
+	border-radius: 5px;
+	width: 160px;
+}
+
+.home-buttons-btn {
+	color: rgb(68, 68, 68);
+}
+
+.home-buttons-btn:hover {
+	color: white !important;
+	background-color: #c4d5c4;
+}
+
+.home-buttons-a:hover {
+	background-color: #c4d5c4;
+	color: white !important;
+}
+
+#list-group {
+	height: 450px;
+}
+
+#list-ul {
+	height: 450px;
+}
+
+.anime-icon {
+	height:60px;
+	width:40px;
+	margin: 0px;
+	margin-left: 1rem;
+}
+
+.category-badges {
+	background-color: #c4d5c4;
+	color: rgb(68, 68, 68);
+	border: rgb(68, 68, 68) solid 2px;
+}
+
+.anime-accord:hover {
+	text-decoration: none;
+}
+
+.list-collapse {
+	display: flex;
+	align-content: center;
+	align-items: center;
+	text-decoration: none !important;
+	color: rgb(68, 68, 68);
+}
+
+.list-collapse:hover {
+	text-decoration: none;
+	color: green;
+}
+
+.list-collapse:focus {
+	box-shadow: 0 0 0 0.2rem rgb(0 128 0 / 25%);
+}
+
+.show-title {
+	display: inline-block;
+	margin-right: 0;
+	margin-left: 1rem;
+}
+
+.user-rating {
+	display: inline-block;
+	margin-left: auto;
+	margin-right: 1rem;
+	width: 120px;
+}
+
+.remove-entry-form {
+	display: inline-block;
+	box-sizing: content-box;
+	height: 24px;
+	width: 100px;
+	margin-top: 1rem;
+	float: right;
+}
+
+.categories-div {
+	margin-left: 1rem;
+}
+
+.remove-entry-btn {
+	height: 24px;
+	width: 100px;
+	padding: .25em .4em;
+	font-size: 75%;
+	font-weight: 700;
+	position: relative;
+}
+
+.genres-div {
+	display: inline-block;
+	margin-top: 1rem;
+}
+
+.anime-details {
+	padding: 0rem 1.5rem; 
+}
+
+.anime-type-p {
+	margin: 0.5rem 0;
+}
+
+.list-buttons {
+	background-color: white;
+	border: #c4d5c4 solid 2px;
+	border-radius: 5px;
+	width: 160px;
+}
+
+.list-buttons-btn {
+	color: rgb(68, 68, 68);
+}
+
+.list-buttons-btn:hover {
+	color: white !important;
+	background-color: #c4d5c4;
+}
+
+.list-buttons-a:hover {
+	background-color: #c4d5c4;
+	color: white !important;
+}
+
+.perm-danger-btn {
+	color: #dc3545;
+}
+
+.perm-danger-btn:hover {
+	background-color: #dc3545;
+	color: white;
+}
+
+.dropdown-menu{
+	margin-top: 0.25rem;
+}
+
+/* scrollbar from: https://codepen.io/zkreations/pen/bZRgqd */
+.sc2::-webkit-scrollbar {
+	width: 5px;
+	height: 5px;
+  }
+.sc2::-webkit-scrollbar-track {
+	background-color:rgba(173, 173, 173, 0.363);
+	border-radius: 10px;
+  }
+.sc2::-webkit-scrollbar-thumb {
+	background-color: #c4d5c4;
+	border-radius: 10px;
+  }
