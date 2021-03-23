@@ -14,16 +14,6 @@ $('.recommended').on('click', function() {
 	$('.waitpage').show();
 });
 
-$('button.update-button').on('click', function() {
-	$(this).siblings().attr('hidden', false);
-	$(this).attr('hidden', true);
-});
-
-$('.list-collapse').on('click', function() {
-	$('.update-entry').attr('hidden',true)
-	$('.update-button').attr('hidden',false)
-});
-
 function categorySelect() {
 	// from https://stackoverflow.com/questions/2683794/jquery-selectors-where-item-does-not-have-children-with-a-certain-class
 	let category = $(this).attr('id');

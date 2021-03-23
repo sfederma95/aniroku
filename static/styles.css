@@ -40,6 +40,11 @@
 	white-space: nowrap;
 }
 
+.flashes {
+	width: 100vw;
+	margin-top: 0.5rem;
+}
+
 p.spoiler {
 	filter: blur(4px);
 }
@@ -120,7 +125,7 @@ body {
 	border: rgb(68, 68, 68) solid 2px;
 }
 
-.anime-accord:hover {
+#anime-accord:hover {
 	text-decoration: none;
 }
 
@@ -141,6 +146,14 @@ body {
 	box-shadow: 0 0 0 0.2rem rgb(0 128 0 / 25%);
 }
 
+.comment-accord {
+	text-decoration: none;
+}
+
+.comment-h2 {
+	width: 100%;
+}
+
 .show-title {
 	display: inline-block;
 	margin-right: 0;
@@ -154,17 +167,24 @@ body {
 	width: 120px;
 }
 
-.remove-entry-form {
-	display: inline-block;
-	box-sizing: content-box;
+.update-entry-btn{
 	height: 24px;
-	width: 100px;
-	margin-top: 1rem;
-	float: right;
+	width: 120px;
+	padding: .25em .4em;
+	font-size: 75%;
+	font-weight: 700;
+	position: relative;
+	color: rgb(68, 68, 68);
+	background-color: #c4d5c4;
 }
 
 .categories-div {
 	margin-left: 1rem;
+}
+
+.curr-entry-form {
+	display: inline-block;
+	margin: 1.5rem 0 0.5rem 0;
 }
 
 .remove-entry-btn {
@@ -177,7 +197,6 @@ body {
 }
 
 .genres-div {
-	display: inline-block;
 	margin-top: 1rem;
 }
 
@@ -221,6 +240,26 @@ body {
 
 .dropdown-menu{
 	margin-top: 0.25rem;
+}
+
+.recommended-pg {
+	margin: 0.5rem 0 1.5rem 0;
+}
+
+#list-actions {
+	position: relative;
+  	left: 50%;
+	transform: translate(-50%, -50%);
+	top: 1.5rem;
+	z-index: 2;
+}
+
+#list-actions > .dropdown-menu {
+	margin-top: 0.25rem;
+}
+
+.green-link {
+	color: green !important;
 }
 
 /* scrollbar from: https://codepen.io/zkreations/pen/bZRgqd */

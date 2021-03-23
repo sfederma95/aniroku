@@ -1,11 +1,31 @@
 {% extends 'base.html' %}
 {% block title %}All Anime Lists{% endblock %}
 {% block content %}
-    <h1>Check out all the cool lists already out there!</h1>
-    {%for list in lists%}
-        <p><a href='/lists/{{list.id}}'>{{list.name}}</a></p>
-        <p>-- by <a href='/{{list.users.id}}/lists'>{{list.users.username}}</a></p>
-    {%endfor%}
-    <a href="/login" class="btn btn-primary">Login</a>
-    <a href="/signup" class="btn btn-primary">Sign Up</a>
+<div class='container mt-3 mb-5'>
+    <div class='jumbotron mx-auto border'>
+        <h1 class='display-1 text-center'>All Aniroku Lists</h1>
+        <p class='lead text-center'>Click on a list for more info, or on a username to see all lists by that user.</p>
+        <div id='list-actions' class="btn-group dropdown mt-2 list-buttons">
+            <button type="button" class="btn dropdown-toggle list-buttons-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Actions
+            </button>
+            <div class="dropdown-menu">
+                <a href="/login" class="dropdown-item list-buttons-a">Login</a>
+                <a href="/signup" class="dropdown-item list-buttons-a">Sign Up</a>
+            </div>
+        </div>
+        <div class="list-group text-center mt-4 mb-n3">
+            {%for list in lists%}
+            <div class="list-group-item list-group-item-action">
+              <a href="/lists/{{list.id}}"  class="green-link d-flex w-100 justify-content-between">
+                <h5 class="mb-1 mx-auto">{{list.name}}</h5>
+              </a>
+              <p class="mb-1">{{list.description}}</p>
+              <small>-- by <a class='green-link' href='/{{list.users.id}}/lists'>{{list.users.username}}</a></small>
+            </div>
+            {%endfor%}
+        </div>
+    </div>
+</div>
 {% endblock %}
+

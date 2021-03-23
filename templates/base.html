@@ -29,10 +29,11 @@
           </ul>
         </div>
       </nav>
+    
+    {% for category, message in get_flashed_messages(with_categories=True) %}
+    <div class="alert alert-{{ category }} flashes">{{ message }}</div>
+    {% endfor %}
     <div class='container-fluid'>
-        {% for category, message in get_flashed_messages(with_categories=True) %}
-        <div class="alert alert-{{ category }}">{{ message }}</div>
-        {% endfor %}
         {% block content %}{% endblock %}
     </div>
 
