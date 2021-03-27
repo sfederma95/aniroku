@@ -1,9 +1,12 @@
 {% extends 'base.html' %}
-{% block title %}All Anime Lists{% endblock %}
+{% block title %}Current List{% endblock %}
 {% block content %}
-<div class='container mt-3 mb-5'>
+<div class='container mb-5'>
     <div class='jumbotron mx-auto border'>
-        <h1 class='display-2'>{{curr_list.name}}</h1>
+        <h1 class='display-2'>
+          <img class='profile-pic' src='{{curr_list.users.avatar_url}}'/>
+          <span>{{curr_list.name}}</span>
+        </h1>
         <p class='lead'>{{curr_list.description}}</p>
         <div class="btn-group dropdown mr-1 mt-2 list-buttons">
             <button type="button" class="btn dropdown-toggle list-buttons-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -116,7 +119,13 @@
                                         {%if comment.spoiler==True%}
                                         <span class='badge badge-pill badge-danger spoiler-toggle'>Spoiler</span>
                                         {%endif%}
-                                        <p class="{{'spoiler to-toggle' if comment.spoiler==True else ''}}">{{comment.text}} -- <a class='green-link' href='/{{comment.user_id}}/lists'>{{comment.username}}</a></p>
+                                        <p class="{{'spoiler to-toggle' if comment.spoiler==True else ''}}">
+                                          {%if comment.entry_owner == True%}
+                                          <img alt='Mobile Suit Gundam icon by Icons8' style="height:1.5em;width:1.5em" src="https://img.icons8.com/ios-filled/100/000000/mobile-suit-gundam.png"/>
+                                          {%endif%}
+                                          {{comment.text}} -- 
+                                          <a class='green-link' href='/{{comment.user_id}}/lists'>{{comment.username}}</a>
+                                        </p>
                                     </div>
                                     {%endfor%}
                                 </div>

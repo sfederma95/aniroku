@@ -1,12 +1,40 @@
 {% extends 'base.html' %}
 {% block title %}My Anime Lists{% endblock %}
 {% block content %}
-    <h1>Welcome to your user portal! {{user.username}}</h1>
-    <a href="/lists/new/{{user.id}}" class="btn btn-primary">Create a list</a>
-    <a href="/category/new" class="btn btn-info">New Category</a>
-    <a href="/users/{{user.id}}/update" class="btn btn-info">Update Account</a>
-    <a href="/users/{{user.id}}/delete" class="btn btn-danger">Delete Account</a>
-    {%for list in user.user_lists%}
-        <p><a href='/lists/{{list.id}}'>{{list.name}}</a></p>
-    {%endfor%}
+<div class='container mb-5'>
+    <div class='jumbotron mx-auto border'>
+        <h4 class='display-4 text-center'>
+            <img class='profile-pic' src='{{user.avatar_url}}'/>
+            <span >Welcome to your portal, {{user.username}}!</span>
+        </h4>
+        <div id='list-actions' class="btn-group dropdown mt-2 list-buttons">
+            <button type="button" class="btn dropdown-toggle list-buttons-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Actions
+            </button>
+            <div class="dropdown-menu">
+                <a href="/lists/new/{{user.id}}" class="dropdown-item list-buttons-a">Create a list</a>
+                <a href="/category/new" class="dropdown-item list-buttons-a">New Category</a>
+                <a href="/users/{{user.id}}/update" class="dropdown-item list-buttons-a">Update Account</a>
+                <div class="dropdown-divider"></div>
+                <a href="/users/{{user.id}}/delete" class="dropdown-item perm-danger-btn">Delete Account</a>
+            </div>
+        </div>
+        <div class="list-group text-center mt-4 mb-n3">
+            {%for list in user.user_lists%}
+            <div class="list-group-item list-group-item-action listed">
+              <a href="/lists/{{list.id}}"  class="green-link d-flex w-100 justify-content-between">
+                <h5 class="mb-1 mx-auto">{{list.name}}</h5>
+              </a>
+              <p class="mb-1">{{list.description}}</p>
+              <small>Inbox <span class="badge badge-dark">{{list.list_suggestions | length}}</span></small>
+              <small>Comments 
+                  <span class="badge badge-dark">
+                      {{comment_occur_lst[loop.index0]}}
+                  </span>
+              </small>
+            </div>
+            {%endfor%}
+        </div>
+    </div>
+</div>
 {% endblock %}

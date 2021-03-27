@@ -1,22 +1,65 @@
 {% extends 'base.html' %}
 {% block title %}All Anime Genres{% endblock %}
 {% block content %}
-    <h1>Find good anime recommendations based on genre!</h1>
-    {%for (name,id) in genres.items()%}
-        <p><a class='genre' href='/genres/{{id}}'>{{name}}</a></p>
-    {%endfor%}
-    <a href="/login" class="btn btn-primary">Login</a>
-    <a href="/signup" class="btn btn-primary">Sign Up</a>
-    
-    
-    
-    <div class="waitpage" id="waitpage" style="display: none;">
-        <div class="waitpage-box">
-            <p>
-                <img alt="(Loading)" src="https://media.giphy.com/media/3o7bu3XilJ5BOiSGic/giphy.gif">
-                <span>Please Wait...</span>
-            </p>
+<div class='container mb-5'>
+    <div class='jumbotron mx-auto border'>
+        <h1 class='display-1 text-center'>Anime Genres</h1>
+        <p class='lead text-center'>Click on a genre to see relevant anime and add them to your anime lists.</p>
+        {%if current_user.get_id()==None%}
+        <div id='list-actions' class="btn-group dropdown mt-2 list-buttons">
+            <button type="button" class="btn dropdown-toggle list-buttons-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Actions
+            </button>
+            <div class="dropdown-menu">
+                <a href="/login" class="dropdown-item list-buttons-a">Login</a>
+                <a href="/signup" class="dropdown-item list-buttons-a">Sign Up</a>
+            </div>
+        </div>
+        {%endif%}
+        <div id='all-genres-div' class='row mx-auto'>
+            <div class="list-group mt-4 mb-n3 col-4">
+                {%for (name,id) in g1.items()%}
+                <div class="list-group-item list-group-item-action listed ">
+                  <a href="/genres/{{id}}"  class="green-link justify-content-between genre">
+                    <h5 class="mb-1">
+                      {{name}}
+                    </h5>
+                  </a>
+                </div>
+                {%endfor%}
+            </div>
+            <div class="list-group mt-4 mb-n3 col-4">
+                {%for (name,id) in g2.items()%}
+                <div class="list-group-item list-group-item-action listed ">
+                  <a href="/genres/{{id}}"  class="green-link justify-content-between genre">
+                    <h5 class="mb-1">
+                      {{name}}
+                    </h5>
+                  </a>
+                </div>
+                {%endfor%}
+            </div>
+            <div class="list-group mt-4 mb-n3 col-4">
+                {%for (name,id) in g3.items()%}
+                <div class="list-group-item list-group-item-action listed ">
+                  <a href="/genres/{{id}}"  class="green-link justify-content-between genre">
+                    <h5 class="mb-1">
+                       {{name}}
+                    </h5>
+                  </a>
+                </div>
+                {%endfor%}
+            </div>
+        </div>
+        <div class="waitpage" id="waitpage" style="display: none;">
+            <div class="waitpage-box">
+                <p>
+                    <img alt="(Loading)" src="https://media.giphy.com/media/3o7bu3XilJ5BOiSGic/giphy.gif">
+                    <span>Please Wait...</span>
+                </p>
+            </div>
         </div>
     </div>
+</div>
 {% endblock %}
 

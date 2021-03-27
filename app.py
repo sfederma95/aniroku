@@ -12,7 +12,6 @@ from profanity_filter import ProfanityFilter
 import spacy
 from flask_mail import Mail, Message
 from sqlalchemy import and_
-from rake_nltk import Rake
 
 from forms import NewUserForm, LoginForm, ListForm, ListUpdateForm, AnimeEntryForm, CategoryForm, SuggestionForm, DeleteUserForm, UpdateUserForm, AddAnimeForm
 from models import db, connect_db, User, List, List_Entry, Comment, Category, Suggestion
@@ -39,7 +38,6 @@ nlp = spacy.load('en')
 profanity_filter = ProfanityFilter(nlps={'en': nlp})  
 nlp.add_pipe(profanity_filter.spacy_component, last=True)
 
-r = Rake(max_length=1)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -51,6 +49,9 @@ def homepage():
     comments = Comment.query.order_by(Comment.id.desc()).limit(5).all()
     return render_template('home.html', recent_picks=recent_picks, comments=comments)
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
 
 @app.route('/lists')
 def show_lists():
@@ -74,7 +75,7 @@ def user_signup():
             )
                 db.session.commit()
                 login_user(user)
-                send_email(f'Welcome to Aniroku, {user.username}!', user.email, 'Create fun lists to share with your friends!')
+                send_email("Welcome to Aniroku!", user.email, 'Create fun lists to share with your friends!')
                 return redirect(f"/my-lists/{user.id}")
             except IntegrityError:
                 db.session.rollback()
@@ -98,10 +99,17 @@ def login():
 @ login_required
 def user_portal(user_id):
     user = User.query.get_or_404(user_id)
+    comment_occur_lst = []
+    for lst in user.user_lists:
+        total=0
+        for entry in lst.list_entries:
+            for comment in entry.entry_comments:
+                total+=1
+        comment_occur_lst.append(total)
     if current_user != user:
         flash("Access unauthorized.", "danger")
         return redirect("/login")
-    return render_template('portal.html', user=user)
+    return render_template('portal.html', user=user, comment_occur_lst=comment_occur_lst)
 
 
 @app.route('/lists/new/<user_id>', methods=['GET', 'POST'])
@@ -238,7 +246,10 @@ def delete_list(list_id):
 @app.route('/genres')
 def get_all_genres():
     genres = jikan_genres
-    return render_template('all-genres.html',genres=genres)
+    g1 = dict(list(genres.items())[:14])
+    g2 = dict(list(genres.items())[15:29])
+    g3 = dict(list(genres.items())[30:])
+    return render_template('all-genres.html',g1=g1,g2=g2,g3=g3)
 
 @app.route('/genres/<genre_id>', methods=['GET','POST'])
 def get_genre_by_id(genre_id):
@@ -448,7 +459,14 @@ def update_user(user_id):
 @ app.route('/<user_id>/lists')
 def view_users(user_id):
     user = User.query.get_or_404(user_id)
-    return render_template('show-user.html', user=user)
+    comment_occur_lst = []
+    for lst in user.user_lists:
+        total=0
+        for entry in lst.list_entries:
+            for comment in entry.entry_comments:
+                total+=1
+        comment_occur_lst.append(total)
+    return render_template('show-user.html', user=user, comment_occur_lst=comment_occur_lst)
 
 @ app.route("/logout")
 @ login_required

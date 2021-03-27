@@ -2,29 +2,29 @@
 {% block title %}New Category{% endblock %}
 
 {% block content %}
-
-  <div class="row justify-content-md-center">
-  <div class="col-md-7 col-lg-5">
-    <h2 class="join-message">Create a category to use in your lists.</h2>
-    <form method="POST">
-      {{ form.hidden_tag() }}
-
-      {% for field in form if field.widget.input_type != 'hidden' %}
-        {% for error in field.errors %}
-          <span class="text-danger">{{ error }}</span>
-        {% endfor %}
-        {{ field(placeholder=field.label.text, class="form-control") }}
-      {% endfor %}
-
-      <button class="btn btn-primary btn-lg btn-block">Create!</button>
-    </form>
+<div class='container mb-5'>
+  <div class='jumbotron mx-auto border'>
+      <h1 class='display-1 text-center'>Create a Category</h1>
+      <p class='lead text-center'>Categories can be used to filter anime on your lists.</p>
+          <form method="POST">
+            {{ form.hidden_tag() }}
+      
+            {% for field in form if field.widget.input_type != 'hidden' %}
+              {% for error in field.errors %}
+                <span class="text-danger">{{ error }}</span>
+              {% endfor %}
+              {{ field(placeholder=field.label.text, class="form-control") }}
+            {% endfor %}
+      
+            <button class="btn btn-primary btn-lg btn-block">Create!</button>
+          </form>
+      
+      <h5 class='display-5'>Current categories:</h5>
+      <ul>
+      {%for category in categories%}
+      <li>{{category.name}}</li>
+      {%endfor%}
+      </ul>
   </div>
 </div>
-
-<h3>Current categories:</h3>
-<ul>
-{%for category in categories%}
-<li>{{category.name}}</li>
-{%endfor%}
-</ul>
 {% endblock %}

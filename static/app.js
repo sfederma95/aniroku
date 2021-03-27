@@ -6,7 +6,7 @@ $('.genre').on('click', function() {
 	$('.waitpage').show();
 });
 
-$('#search').on('click', function() {
+$('#go').on('click', function() {
 	$('.waitpage').show();
 });
 

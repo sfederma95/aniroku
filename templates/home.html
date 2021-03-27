@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}Homepage{% endblock %}
 {% block content %}
-<div class='container mt-5 mb-5'>
+<div class='container mb-5'>
     <div class='jumbotron row mx-auto border'>
         <h1 class='display-1 col-12 text-center pb-4 border-bottom'>Welcome to Aniroku</h1>
         <div id='side-1' class='col-6 my-auto text-center border-right pt-2' >
@@ -32,6 +32,7 @@
                 </div>
             </div>
         </div>
+        {%if recent_picks%}
         <h3 id='recent-activity' class='display-4 mt-3 text-center col-12 pt-2 border-bottom border-top pb-2' >Recent User Activity:</h3>
         <div id="carouselControls" class="carousel slide mt-4 mb-n3 col-7" data-ride="carousel">
             <div class="carousel-inner">
@@ -57,13 +58,14 @@
             <ul id='list-ul' class='list-group'>
                 {%for comment in comments%}
                 <li class='list-group-item list-item sc2'>
-                    <i class="far fa-comments"></i>
+                    <img alt='by Icons8' style="height:1.5em;width:1.5em" src="https://img.icons8.com/doodle/96/000000/topic-bubble.png"/>
                     <span>{{comment.entries.anime_title}}:</span>
-                    <span class='d-block comment-text'>'{{comment.text}}'</span>
+                    <span class='d-block comment-text'>'{{comment.text}}' <small>-- <a class='green-link' href='/{{comment.user_id}}/lists'>{{comment.username}}</a></small></span>
                 </li>
                 {%endfor%}
             </ul>
         </div>
+        {%endif%}
     </div>
 </div>
 {% endblock %}

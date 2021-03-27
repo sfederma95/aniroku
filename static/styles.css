@@ -1,3 +1,13 @@
+body, html {
+    height:100%;
+}
+
+.content {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+}
+
 .waitpage {
 	background: url(../images/blockUI.png) repeat scroll 0 0 rgba(0, 0, 0, 0);
 	height: 100%;
@@ -49,6 +59,11 @@ p.spoiler {
 	filter: blur(4px);
 }
 
+.spoiler-toggle {
+	margin-bottom: 0.3rem;
+
+}
+
 img{
 	height: 450px;
 	width: 300px;
@@ -68,6 +83,20 @@ body {
 	background-color: #77815c;
 	box-shadow: 0 2px 4px -1px rgba(255, 255, 255, 0.26);
 	line-height: 0.75rem;
+}
+
+.profile-pic {
+	height: 5rem;
+	width: 5rem;
+	border-radius: 8px;
+	border: 2px dashed rgb(68, 68, 68);
+}
+
+.profile-pic-small{
+	height: 2.5em;
+	width: 2.5em;
+	border-radius: 8px;
+	margin-left: 0.1em;
 }
 
 .list-item {
@@ -262,6 +291,102 @@ body {
 	color: green !important;
 }
 
+.listed:hover{
+	background-color: rgb(68, 68, 68);
+	color: white;
+}
+
+.listed:hover h5 {
+	color: white;
+}
+
+.listed:hover a {
+	text-decoration-color: rgb(194, 194, 243);
+	color: white !important;
+}
+
+.listed:hover span {
+	background-color: white;
+	color: rgb(68, 68, 68);
+}
+
+/* main add to list page */
+.add-anime-form {
+	display: flex;
+	position: relative;
+  }
+  
+  #search.form-control {
+	border-radius: 20px;
+	width: 100%;
+	font-size: 1em;
+	padding-left: 1em;
+	box-sizing: border-box;
+	height: 2.5em;
+  }
+  
+  #search.form-control + .btn {
+	position: absolute;
+	right: 1em;
+	top: 0.4em;
+	bottom: 0.5em;
+	z-index: 1;
+	padding: 0;
+	color: #66757f;
+  }
+
+  #add-this-anime {
+	width: 70%;
+	margin: 0 auto;
+  }
+
+  #add-this-anime .form-control {
+	font-size: 1em;
+	height: 2.5em;
+  }
+
+  .rated {
+	margin: 0.5rem 0;
+  }
+
+  .episodes {
+	margin: 0.5rem 0;
+  }
+
+  .mal-rating {
+	display: inline-block;
+	margin-left: auto;
+	margin-right: 1rem;
+	width: 10rem;
+  }
+
+/* all genres page */
+#all-genres-div{
+	width: 65%;
+	text-align: center;
+}
+
+#jumbo-404{
+	height: 50vh;
+	width: 50vw;
+	color: white;
+	top: 30%;
+	position: relative;
+	margin: 0 auto;
+}
+
+.chalk {
+	font-family: 'Fredericka the Great', cursive;
+}
+
+/* 404 */
+#page-404{
+	background-image: url('/static/images/404-oops.png');
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: 25% 25%;
+}
+
 /* scrollbar from: https://codepen.io/zkreations/pen/bZRgqd */
 .sc2::-webkit-scrollbar {
 	width: 5px;
@@ -275,3 +400,16 @@ body {
 	background-color: #c4d5c4;
 	border-radius: 10px;
   }
+
+/* footer */
+.footer {
+	position: relative;
+	bottom: 0;
+	width: 100%;
+	padding: 0;
+	font-size: 15px;
+	height: 25px;
+	background-color: #77815c;
+	color: white;
+	text-align: center;
+}

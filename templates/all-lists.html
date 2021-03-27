@@ -1,10 +1,11 @@
 {% extends 'base.html' %}
 {% block title %}All Anime Lists{% endblock %}
 {% block content %}
-<div class='container mt-3 mb-5'>
+<div class='container mb-5'>
     <div class='jumbotron mx-auto border'>
         <h1 class='display-1 text-center'>All Aniroku Lists</h1>
         <p class='lead text-center'>Click on a list for more info, or on a username to see all lists by that user.</p>
+        {%if current_user.get_id()==None%}
         <div id='list-actions' class="btn-group dropdown mt-2 list-buttons">
             <button type="button" class="btn dropdown-toggle list-buttons-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Actions
@@ -14,14 +15,19 @@
                 <a href="/signup" class="dropdown-item list-buttons-a">Sign Up</a>
             </div>
         </div>
+        {%endif%}
         <div class="list-group text-center mt-4 mb-n3">
             {%for list in lists%}
-            <div class="list-group-item list-group-item-action">
+            <div class="list-group-item list-group-item-action listed">
               <a href="/lists/{{list.id}}"  class="green-link d-flex w-100 justify-content-between">
-                <h5 class="mb-1 mx-auto">{{list.name}}</h5>
+                <h5 class="mb-1 mx-auto">
+                  {{list.name}}
+                </h5>
               </a>
               <p class="mb-1">{{list.description}}</p>
-              <small>-- by <a class='green-link' href='/{{list.users.id}}/lists'>{{list.users.username}}</a></small>
+              <small>-- by <a class='green-link' href='/{{list.users.id}}/lists'>{{list.users.username}}</a>
+                <img class='profile-pic-small' src='{{list.users.avatar_url}}'/>
+              </small>
             </div>
             {%endfor%}
         </div>

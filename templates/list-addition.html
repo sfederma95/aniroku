@@ -2,58 +2,87 @@
 {% block title %}Add Anime to List{% endblock %}
 
 {% block content %}
-
-  <div class="row justify-content-md-center">
-  <div class="col-md-7 col-lg-5">
-    <h2 class="join-message">Add to your anime list.</h2>
-    <p>Search for your favorite anime titles:</p>
-    <form class="navbar-form navbar-right" action='/lists/{{curr_list.id}}/add'>
-        <input name="q" class="form-control" placeholder="Search for Anime">
-        <button id='search' class="btn btn-default">
-          <span class="fa fa-search"></span>
-        </button>
-      </form>
+<div class='container mb-5'>
+  <div class='jumbotron mx-auto border'>
+    <div class="row justify-content-md-center align-items-center text-center">
+      <div class="col-md-7 col-lg-5">
+        <h2 class="join-message">Add to your anime list</h2>
+        <p>Search for your favorite anime titles</p>
+        <form class='add-anime-form mb-5' action='/lists/{{curr_list.id}}/add'>
+          <input name="q" class="form-control" placeholder="Search for Anime" id='search'>
+          <button id='go' class="btn btn-default">
+            <span class="fa fa-search"></span>
+          </button>
+        </form>
+      </div>
     </div>
-</div>
     {%if anime%}
-    <form method="POST">
+    <form id='add-this-anime' class='mb-4' method="POST">
       {{ form.hidden_tag() }}
-
       {% for field in form if field.widget.input_type != 'hidden' %}
         {% for error in field.errors %}
-          <span class="text-danger">{{ error }}</span>
+        <span class="text-danger">{{ error }}</span>
         {% endfor %}
-        {{ field(placeholder=field.label.text, class="form-control") }}
       {% endfor %}
-
-      <button id='add-anime' class="btn btn-primary btn-lg btn-block">Add!</button>
+      <div class='form-row mb-2'>
+        <div class='col-12'>
+          {{ form.anime(placeholder=form.anime.label.text, class="form-control add-anime-input") }}
+        </div>
+      </div>
+      <div class='form-row '>
+        <div class='col'>
+          {{ form.rating(placeholder=form.rating.label.text, class="form-control add-anime-input")}}
+        </div>
+        <div class='col'>
+          {{ form.categories(placeholder=form.categories.label.text, class="form-control add-anime-input sc2")}}
+        </div>
+      </div>
+      <div class="btn-group dropdown mr-1 mt-2 list-buttons">
+        <button type="button" class="btn dropdown-toggle list-buttons-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Actions
+        </button>
+        <div class="dropdown-menu">
+            <button id='add-anime' class="dropdown-item list-buttons-a">Add!</button>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item list-buttons-a" href='/lists/{{curr_list.id}}'>I'm done!</a>
+        </div>
+      </div>
     </form>
     {%endif%}
-  <button class="btn btn-warning btn-lg btn-block"><a href='/lists/{{curr_list.id}}'>I'm done!</a></button>
-<div class='container-fluid'>
-    <div class='row'>
-    {%for anime in anime['results']%}
-    <div class="card mb-3 col-3">
-        <img style='max-height:250px;' src="{{anime['image_url']}}">
-        <div class="card-body">
-            <h5 class="card-title">{{anime['title']}}</h5>
-            <p class="card-text">{{anime['synopsis']}}</p>
-            <p class="card-text"><small class="text-muted">Rating: {{anime['score']}}</small></p>
+    <div class="accordion mx-auto mt-4" id="anime-accord">
+            {%for anime in anime['results']%}
+            <div class="card listed-anime {{loop.index}}">
+              <div class="card-header p-0" id="heading{{loop.index}}">
+                <h2 class="mb-0">
+                  <button class="btn btn-link btn-block text-left list-collapse" type="button" data-toggle="collapse" data-target="#collapse{{loop.index}}" aria-expanded="true" aria-controls="collapse{{loop.index}}">
+                    <img class='anime-icon' src='{{anime['image_url']}}'>
+                    <span class='show-title'>{{anime['title']}}</span>
+                    <span class='mal-rating'>MAL Rating: {{'0.00' if anime['score']==0 else anime['score']}}</span>
+                  </button>
+                </h2>
+              </div>
+              <div id="collapse{{loop.index}}" class="collapse" aria-labelledby="heading{{loop.index}}" data-parent="#anime-accord">
+                <div class="card-body anime-details">
+                    <p class='anime-type-p'>Type: {{anime['type']}}</p>
+                    <p class='m-0'>Synopsis: {{anime['synopsis']}}</p>
+                    <p class='episodes'>Episodes: {{anime['episodes']}}</p>
+                    <p class='rated'>Rated: {{anime['rated']}}</p>
+                    <p class='recommended-pg'>You may also like these titles: <a class='green-link' href='/{{anime["mal_id"]}}/recommendations?t={{anime["title"]}}'>Link</a></p>
+                </div>
+              </div>
+            </div>
+            {%endfor%}
         </div>
-    </div>
-    {%endfor%}
-    </div>
-    </div>
+  </div>
+</div>
 
-
-    
-  <div class="waitpage" id="waitpage" style="display: none;">
+<div class="waitpage" id="waitpage" style="display: none;">
       <div class="waitpage-box">
           <p>
               <img alt="(Loading)" src="https://media.giphy.com/media/3o7bu3XilJ5BOiSGic/giphy.gif">
               <span>Please Wait...</span>
           </p>
       </div>
-  </div>
+</div>
   
 {% endblock %}
