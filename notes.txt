@@ -1,5 +1,5 @@
-1. make a custom 404 page
-1. wheres the avatar picture?
+1. make a custom 404 page -- done
+1. wheres the avatar picture? -- done
 1. recommendation based on category tag on user lists, mix two things maybe rating top 5
 1. stars instead of number ratings or anime character. 
 1. for commenting, notifications on desktop or in app instead of email, with sound

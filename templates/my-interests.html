@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}My Recommended Page{% endblock %}
+
+{% block content %}
+<div class='container mb-5'>
+    <div class='jumbotron mx-auto border'>
+      <h2 class="join-message text-center">Based on your interests:</h2>
+      <div id='list-actions' class="btn-group dropdown mt-2 list-buttons">
+          <button type="button" class="btn dropdown-toggle list-buttons-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Actions
+          </button>
+          <div class="dropdown-menu">
+            <a href="/my-lists/{{current_user.id}}" class="dropdown-item list-buttons-a">My Lists</a>
+            <a href="/lists" class="dropdown-item list-buttons-a">All Lists</a>
+          </div>
+      </div>
+      <div class="accordion mx-auto mt-4" id="anime-accord">
+              {%for anime in anime_lst%}
+              <div class="card listed-anime {{loop.index}}">
+                <div class="card-header p-0" id="heading{{loop.index}}">
+                  <h2 class="mb-0">
+                    <button class="btn btn-link btn-block text-left list-collapse" type="button" data-toggle="collapse" data-target="#collapse{{loop.index}}" aria-expanded="true" aria-controls="collapse{{loop.index}}">
+                      <img class='anime-icon' src='{{anime['image_url']}}'>
+                      <span class='show-title'>{{anime['title']}}</span>
+                      <span class='mal-rating'>Rating: {{anime['score']}}</span>
+                    </button>
+                  </h2>
+                </div>
+                <div id="collapse{{loop.index}}" class="collapse" aria-labelledby="heading{{loop.index}}" data-parent="#anime-accord">
+                  <div class="card-body anime-details">
+                      <p class='anime-type-p mt-3'>Type: {{anime['type']}}</p>
+                      <p class='m-0'>Synopsis: {{anime["synopsis"]}}</p>
+                      <p class='recommended-pg'>You may also like these titles: <a class='green-link' href='/{{anime["mal_id"]}}/recommendations?t={{anime["title"]}}'>Link</a></p>
+                  </div>
+                </div>
+              </div>
+              {%endfor%}
+      </div>
+      <div class="waitpage" id="waitpage" style="display: none;">
+        <div class="waitpage-box">
+            <p>
+                <img alt="(Loading)" src="https://media.giphy.com/media/3o7bu3XilJ5BOiSGic/giphy.gif">
+                <span>Please Wait...</span>
+            </p>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -4,6 +4,8 @@ from flask_mail import Mail, Message
 from threading import Thread
 from models import List_Entry, Suggestion, User
 from flask_sqlalchemy import SQLAlchemy
+from random import choice 
+from genres import jikan_genres
 
 app_funcs = Blueprint('app_funcs',__name__)
 
@@ -18,6 +20,18 @@ def get_anime_info(num):
         'anime_id':num, 'anime_title':anime_by_id['title'],'anime_img_url':anime_by_id['image_url'], 'anime_type':anime_by_id['type'], 'anime_genres':genres, 'anime_synopsis':anime_by_id['synopsis']
     }
     return anime_info
+
+def category_genre_picker(set1,set2):
+    if set1 == []:
+        q='generic'
+    else:
+        q=choice(set1)
+    if set2 == []:
+        set2 = ['Action']
+    resp = requests.get(f'https://api.jikan.moe/v3/search/anime?q={q}&genre={jikan_genres[choice(set2)]},{jikan_genres[choice(set2)]},{jikan_genres[choice(set2)]}&genre_exclude=0&limit=5')
+    anime_resp = resp.json()
+    anime_lst = anime_resp['results']
+    return anime_lst
 
 def byRating(el):
     return el.rating

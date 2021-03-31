@@ -55,7 +55,11 @@
                         {%endfor%}
                     </div>
                     {%endif%}
-                    <span class='user-rating'>User rating: {{'?' if anime.rating == 0 else anime.rating}}</span>
+                    <span class='user-rating'>
+                      {%for el in ratings[anime.rating]%}
+                      <img style='height:2em;width:2em;' src='{{el}}'>
+                      {%endfor%}
+                    </span>
                   </button>
                 </h2>
               </div>

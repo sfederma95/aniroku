@@ -4,7 +4,7 @@ from sqlalchemy.exc import IntegrityError
 import requests
 from flask_bcrypt import Bcrypt
 from genres import jikan_genres
-from funcs import get_anime_info, byRating, standardize, send_email, make_list_entry, send_anime_recommendation, invalid_signup
+from funcs import get_anime_info, byRating, standardize, send_email, make_list_entry, send_anime_recommendation, invalid_signup, category_genre_picker
 from funcs import app_funcs
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from flask_wtf.csrf import CSRFProtect
@@ -12,6 +12,7 @@ from profanity_filter import ProfanityFilter
 import spacy
 from flask_mail import Mail, Message
 from sqlalchemy import and_
+from ratings import one_star, half_star, no_star, ratings_dict
 
 from forms import NewUserForm, LoginForm, ListForm, ListUpdateForm, AnimeEntryForm, CategoryForm, SuggestionForm, DeleteUserForm, UpdateUserForm, AddAnimeForm
 from models import db, connect_db, User, List, List_Entry, Comment, Category, Suggestion
@@ -52,6 +53,28 @@ def homepage():
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
+
+@app.route('/<user_id>/my-recommendations')
+@login_required
+def my_recommended_pg(user_id):
+    user = User.query.get_or_404(user_id)
+    if current_user != user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/login")
+    get_categories = set()
+    get_genres = set()
+    for lst in current_user.user_lists:
+        for entry in lst.list_entries:
+            if entry.rating >= 9:
+                for genre in entry.anime_genres:
+                    get_genres.add(genre)
+                if entry.categories == None:
+                        get_categories = []
+                else:
+                    for category in entry.categories:
+                        get_categories.add(category)
+    anime_lst = category_genre_picker(list(get_categories),list(get_genres))
+    return render_template('my-interests.html',anime_lst=anime_lst)
 
 @app.route('/lists')
 def show_lists():
@@ -144,11 +167,12 @@ def show_list(list_id):
     genres = jikan_genres
     categories = set()
     all_categories = Category.query.all()
+    ratings = ratings_dict
     for entry in curr_list.list_entries:
         if entry.categories:
             for category in entry.categories:
                 categories.add(category)
-    return render_template('show-list.html', curr_list=curr_list, genres=genres,categories=categories,all_categories=all_categories)
+    return render_template('show-list.html', curr_list=curr_list, genres=genres,categories=categories,all_categories=all_categories, ratings=ratings)
 
 @app.route('/lists/<list_id>/update',methods=['GET','POST'])
 @login_required
@@ -406,7 +430,6 @@ def new_comment(list_id,entry_id):
         db.session.add(comment)
         db.session.commit()
         flash("Posted!", "success")
-        send_email('You have a new discussion comment!',curr_list.users.email,f'Check out your comments: {comment.text} --by {comment.username}')
     return redirect(f'/lists/{curr_list.id}')
 
 @app.route('/users/<user_id>/delete', methods=['GET', 'POST'])
