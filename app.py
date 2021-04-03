@@ -98,7 +98,6 @@ def user_signup():
             )
                 db.session.commit()
                 login_user(user)
-                send_email("Welcome to Aniroku!", user.email, 'Create fun lists to share with your friends!')
                 return redirect(f"/my-lists/{user.id}")
             except IntegrityError:
                 db.session.rollback()
@@ -302,7 +301,7 @@ def get_recommendations(anime_id):
     form = AddAnimeForm()
     resp = requests.get(f'https://api.jikan.moe/v3/anime/{anime_id}/recommendations')
     recommendations = resp.json()
-    if recommendations['recommendations'] == []:
+    if recommendations["recommendations"] == []:
         abort(404)
     curr_title = request.args.get('t')
     if current_user.get_id()!=None:
@@ -325,6 +324,9 @@ def get_recommendations(anime_id):
 @app.route('/category/new', methods=['GET', 'POST'])
 @login_required
 def create_category():
+    if current_user.get_id()==None:
+        flash("Please login to make a category.", "danger")
+        return redirect("/login")
     form = CategoryForm()
     categories = Category.query.all()
     if form.validate_on_submit():
@@ -346,6 +348,9 @@ def create_category():
 @app.route('/<list_id>/suggestions', methods=['GET','POST'])
 @login_required
 def make_suggestion(list_id):
+    if current_user.get_id()==None:
+        flash("Please login to make suggestions.", "danger")
+        return redirect("/login")
     curr_list = List.query.get_or_404(list_id)
     if current_user.id == curr_list.users.id:
         flash("Recommending an anime to yourself?", "warning")
@@ -412,6 +417,9 @@ def delete_suggestion(suggestion_id):
 @login_required
 def new_comment(list_id,entry_id):
     # https://stackoverflow.com/questions/63851329/how-to-add-csrf-to-flask-app-without-wtforms
+    if current_user.get_id()==None:
+        flash("Please login to comment.", "danger")
+        return redirect("/login")
     curr_list = List.query.get_or_404(list_id)
     entry = List_Entry.query.get_or_404(entry_id)
     comment_data = request.form['comment']

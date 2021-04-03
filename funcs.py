@@ -82,7 +82,6 @@ def send_anime_recommendation(anime_lst, anime_id, comment, username, curr_list)
     comment=comment or 'No comment from suggester.', username=username)
     db.session.add(suggestion)
     db.session.commit()
-    send_email('You have a new suggestion in your inbox!', curr_list.users.email, f'The anime {suggestion.anime_title} has been recommended by {suggestion.username}. Check out your inbox to add this to your list called "{curr_list.name}"!')
 
 def invalid_signup(username_data,email_data):
     if User.query.filter(User.username == username_data).first() and User.query.filter(User.email == email_data).first():
