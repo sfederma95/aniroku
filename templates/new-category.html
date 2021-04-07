@@ -6,25 +6,39 @@
   <div class='jumbotron mx-auto border'>
       <h1 class='display-1 text-center'>Create a Category</h1>
       <p class='lead text-center'>Categories can be used to filter anime on your lists.</p>
-          <form method="POST">
-            {{ form.hidden_tag() }}
-      
-            {% for field in form if field.widget.input_type != 'hidden' %}
-              {% for error in field.errors %}
-                <span class="text-danger">{{ error }}</span>
-              {% endfor %}
-              {{ field(placeholder=field.label.text, class="form-control") }}
-            {% endfor %}
-      
-            <button class="btn btn-primary btn-lg btn-block">Create!</button>
-          </form>
-      
-      <h5 class='display-5'>Current categories:</h5>
-      <ul>
-      {%for category in categories%}
-      <li>{{category.name}}</li>
-      {%endfor%}
-      </ul>
+      <form id='add-this-anime' class='mb-5 mt-4' method="POST">
+        {{ form.hidden_tag() }}
+        <div class='form-group'>
+        {% for field in form if field.widget.input_type != 'hidden' %}
+          {% for error in field.errors %}
+          <span class="text-danger">{{ error }}</span>
+          {% endfor %}
+          {{ field(placeholder=field.label.text, class="form-control text-center")}}
+        {% endfor %}
+        </div>
+        <div id='list-actions' class="btn-group dropdown list-buttons">
+          <button type="button" class="btn dropdown-toggle list-buttons-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Actions
+          </button>
+          <div class="dropdown-menu">
+              <button id='add-anime' class="dropdown-item list-buttons-a">Submit!</button>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item list-buttons-a" href='/my-lists/{{current_user.id}}'>Back</a>
+          </div>
+        </div>
+      </form>
+      <h4 class='join-message text-center mt-5'>Current categories:</h4>
+      <div class="list-group text-center mt-4 mb-n3">
+        {%for category in categories%}
+        <div class="list-group-item list-group-item-action listed">
+          <div class="green-link d-flex w-100 justify-content-between">
+            <h5 class="mb-1 mx-auto">
+              {{category.name}}
+            </h5>
+          </div>
+        </div>
+        {%endfor%}
+      </div>
   </div>
 </div>
 {% endblock %}

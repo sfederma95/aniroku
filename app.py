@@ -12,7 +12,7 @@ from profanity_filter import ProfanityFilter
 import spacy
 from flask_mail import Mail, Message
 from sqlalchemy import and_
-from ratings import one_star, half_star, no_star, ratings_dict
+from ratings import ratings_dict
 
 from forms import NewUserForm, LoginForm, ListForm, ListUpdateForm, AnimeEntryForm, CategoryForm, SuggestionForm, DeleteUserForm, UpdateUserForm, AddAnimeForm
 from models import db, connect_db, User, List, List_Entry, Comment, Category, Suggestion
@@ -84,6 +84,9 @@ def show_lists():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def user_signup():
+    if current_user.get_id()!=None:
+        flash('You are already logged in!','danger')
+        return redirect(f'/my-lists/{current_user.id}')
     form = NewUserForm()
     if form.validate_on_submit():
         if pf.is_profane(form.username.data) == True:
@@ -98,6 +101,7 @@ def user_signup():
             )
                 db.session.commit()
                 login_user(user)
+                send_email('Welcome to Aniroku',user.email,'Create new lists and share with your friends, enjoy!')
                 return redirect(f"/my-lists/{user.id}")
             except IntegrityError:
                 db.session.rollback()
@@ -107,6 +111,9 @@ def user_signup():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if current_user.get_id()!=None:
+        flash('You are already logged in!','danger')
+        return redirect(f'/my-lists/{current_user.id}')
     form = LoginForm()
     if form.validate_on_submit():
         user = User.authenticate(form.username.data, form.password.data)
@@ -371,6 +378,7 @@ def make_suggestion(list_id):
         else:
             send_anime_recommendation(anime,form.anime.data,form.comment.data,current_user.username,curr_list)
             flash(f'{curr_list.users.username} will see your recommendation in their inbox!','success')
+            send_email('Someone has recommended an anime to you',curr_list.users.email,'Check out your inbox to see what has been sent to you!')
             return redirect(f'/lists/{curr_list.id}')
     return render_template('suggest-form.html',form=form,curr_list=curr_list,anime=anime)
 

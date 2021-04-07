@@ -28,8 +28,8 @@ class ListForm(FlaskForm):
 
 class ListUpdateForm(FlaskForm):
     name = StringField(
-        'Update name for this list', validators=[Optional(), Length(min=3), Length(max=20)])
-    description = TextAreaField('Update description for this list', validators=[
+        'New name', validators=[Optional(), Length(min=3), Length(max=20)])
+    description = TextAreaField('New description', validators=[
                                 Optional(), Length(max=80)])
 
 
@@ -46,7 +46,7 @@ class CategoryForm(FlaskForm):
 class SuggestionForm(FlaskForm):
     anime = SelectField('Anime to be recommended', coerce=int)
     comment = TextAreaField('Why do you recommend this anime?', validators=[
-                             Optional(), Length(max=80)])
+                             Optional(), Length(max=120)])
 
 class DeleteUserForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])

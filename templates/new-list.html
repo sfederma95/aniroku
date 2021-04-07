@@ -2,23 +2,30 @@
 {% block title %}New Anime List{% endblock %}
 
 {% block content %}
-
-  <div class="row justify-content-md-center">
-  <div class="col-md-7 col-lg-5">
-    <h2 class="join-message">Create a new list of your favorite anime.</h2>
-    <form method="POST">
+<div class='container mb-5'>
+  <div class='jumbotron mx-auto border'>
+    <h2 class="join-message text-center">Create a new list</h2>
+    <form id='add-this-anime' class='mb-4 mt-4' method="POST">
       {{ form.hidden_tag() }}
-
+      <div class='form-group'>
       {% for field in form if field.widget.input_type != 'hidden' %}
         {% for error in field.errors %}
-          <span class="text-danger">{{ error }}</span>
+        <span class="text-danger">{{ error }}</span>
         {% endfor %}
-        {{ field(placeholder=field.label.text, class="form-control") }}
+        {{ field(placeholder=field.label.text, class="form-control mb-2")}}
       {% endfor %}
-
-      <button class="btn btn-primary btn-lg btn-block">Create!</button>
+      </div>
+      <div id='list-actions' class="btn-group dropdown mr-1 mt-1 list-buttons">
+        <button type="button" class="btn dropdown-toggle list-buttons-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Actions
+        </button>
+        <div class="dropdown-menu">
+            <button id='add-anime' class="dropdown-item list-buttons-a">Create!</button>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item list-buttons-a" href='/my-lists/{{current_user.id}}'>I'm done!</a>
+        </div>
+      </div>
     </form>
   </div>
 </div>
-
 {% endblock %}

@@ -34,7 +34,7 @@
         </div>
         {%if recent_picks%}
         <h3 id='recent-activity' class='display-4 mt-3 text-center col-12 pt-2 border-bottom border-top pb-2' >Recent User Activity:</h3>
-        <div id="carouselControls" class="carousel slide mt-4 mb-n3 col-7" data-ride="carousel">
+        <div id="carouselControls" class="carousel slide mt-4 mb-n3 {{'col-12' if not comments else 'col-7'}} " data-ride="carousel">
             <div class="carousel-inner">
               <div class="carousel-item active">
                 <img src="{{recent_picks[0].anime_img_url}}" class="d-block" alt="{{recent_picks[0].anime_title}}">
@@ -54,6 +54,7 @@
               <span class="sr-only">Next</span>
             </a>
         </div>
+        {%if comments%}
         <div id='list-group' class='col-5 mt-4' >
             <ul id='list-ul' class='list-group'>
                 {%for comment in comments%}
@@ -66,6 +67,7 @@
             </ul>
         </div>
         {%endif%}
+       {%endif%}
     </div>
 </div>
 {% endblock %}

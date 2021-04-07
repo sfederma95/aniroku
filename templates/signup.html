@@ -2,23 +2,47 @@
 {% block title %}Signup{% endblock %}
 
 {% block content %}
-
-  <div class="row justify-content-md-center">
-  <div class="col-md-7 col-lg-5">
-    <h2 class="join-message">Join Aniroku today.</h2>
-    <form method="POST">
+<div class='container mb-5'>
+  <div class='jumbotron mx-auto border'>
+    <div class="row justify-content-md-center align-items-center text-center">
+      <div class="col-md-7 col-lg-5">
+        <h2 class="join-message">Join Aniroku today!</h2>
+      </div>
+    </div>
+    <form id='add-this-anime' class='mb-4' method="POST">
       {{ form.hidden_tag() }}
-
       {% for field in form if field.widget.input_type != 'hidden' %}
         {% for error in field.errors %}
-          <span class="text-danger">{{ error }}</span>
+        <div class="text-danger">{{ error }}</div>
         {% endfor %}
-        {{ field(placeholder=field.label.text, class="form-control") }}
       {% endfor %}
-
-      <button class="btn btn-primary btn-lg btn-block">Sign me up!</button>
+      <div class='form-row mb-2 mt-3'>
+        <div class='col'>
+          {{ form.username(placeholder=form.username.label.text, class="form-control add-anime-input")}}
+        </div>
+        <div class='col'>
+          {{ form.password(placeholder=form.password.label.text, class="form-control add-anime-input ")}}
+        </div>
+      </div>
+      <div class='form-row '>
+        <div class='col'>
+          {{ form.email(placeholder=form.email.label.text, class="form-control add-anime-input")}}
+        </div>
+        <div class='col'>
+          {{ form.avatar_url(placeholder=form.avatar_url.label.text, class="form-control add-anime-input ")}}
+        </div>
+      </div>
+      <div id='list-actions' class="btn-group dropdown mr-1 mt-4 list-buttons">
+        <button type="button" class="btn dropdown-toggle list-buttons-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Actions
+        </button>
+        <div class="dropdown-menu">
+            <button id='add-anime' class="dropdown-item list-buttons-a">Sign me up!</button>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item list-buttons-a" href='/'>Homepage</a>
+        </div>
+      </div>
     </form>
   </div>
 </div>
-
 {% endblock %}

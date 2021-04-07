@@ -1,21 +1,41 @@
 {% extends 'base.html' %}
 {% block title %}Suggestions{% endblock %}
 {% block content %}
-    <h1>Check out suggestions for {{curr_list.name}}</h1>
-    {%for suggestion in curr_list.list_suggestions%}
-        <p>{{suggestion.anime_title}}</p>
-        <p>{{suggestion.comment}}</p>
-        <a href='{{suggestion.mal_url}}'>Link</a>
-        <p>-- by {{suggestion.username}}</p>
-        <form method="POST" action="/suggestions/{{suggestion.id}}/add-to-list">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-            <input type="hidden" name="anime-id" value="{{suggestion.anime_id}}">
-            <input type="hidden" name="list-id" value="{{curr_list.id}}">
-            <button class="btn btn-primary">Add</button>
-        </form>
-        <form method="POST" action="/suggestions/{{suggestion.id}}/remove">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-            <button class="btn btn-danger">Delete</button>
-        </form>
-    {%endfor%}
+<div class='container mb-5'>
+    <div class='jumbotron mx-auto border'>
+        <h1 class='join-message text-center'>Check out suggestions for {{curr_list.name}}</h1>
+        <div id='list-actions' class="btn-group dropdown mt-2 list-buttons">
+            <button type="button" class="btn dropdown-toggle list-buttons-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Actions
+            </button>
+            <div class="dropdown-menu">
+                <a href="/lists/{{curr_list.id}}" class="dropdown-item list-buttons-a">Back</a>
+                <a href="/my-lists/{{current_user.id}}" class="dropdown-item list-buttons-a">My Lists</a>
+            </div>
+        </div>
+        <div class="list-group text-center mt-4 mb-n3">
+            {%for suggestion in curr_list.list_suggestions%}
+            <div class="list-group-item list-group-item-action listed">
+              <a href="{{suggestion.mal_url}}"  class="green-link d-flex w-100 justify-content-between">
+                <h5 class="mb-1 mx-auto">
+                    {{suggestion.anime_title}}
+                </h5>
+              </a>
+              <p class="mb-1">"{{suggestion.comment}}"</p>
+              <small class='d-block mb-n3'>-- by {{suggestion.username}}</small>
+              <form class='curr-entry-form mr-1' method="POST" action="/suggestions/{{suggestion.id}}/add-to-list">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <input type="hidden" name="anime-id" value="{{suggestion.anime_id}}">
+                <input type="hidden" name="list-id" value="{{curr_list.id}}">
+                <button class="btn add-suggestion-btn">Add</button>
+              </form>
+              <form class='curr-entry-form' method="POST" action="/suggestions/{{suggestion.id}}/remove">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <button class="btn remove-entry-btn">Delete</button>
+              </form>
+            </div>
+            {%endfor%}
+        </div>
+    </div>
+</div>
 {% endblock %}

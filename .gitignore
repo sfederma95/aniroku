@@ -3,3 +3,4 @@ venv/
 secrets.py
 .vscode/
 test_models.pyc
+notes.txt
