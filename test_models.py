@@ -2,7 +2,7 @@ from unittest import TestCase
 from sqlalchemy import exc
 from flask_bcrypt import Bcrypt
 
-from models import db, connect_db, User, List, List_Entry, Comment, Category, Suggestion
+from capstone1.models import db, connect_db, User, List, List_Entry, Comment, Category, Suggestion
 
 SQLALCHEMY_DATABASE_URI = 'postgres:///anime-list-test'
 
