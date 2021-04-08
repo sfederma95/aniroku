@@ -4,3 +4,5 @@ secrets.py
 .vscode/
 test_models.pyc
 notes.txt
+.DS_Store
+static/.DS_Store
