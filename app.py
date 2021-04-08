@@ -35,7 +35,7 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 pf = ProfanityFilter()
-nlp = spacy.load('en')
+nlp = spacy.load('en_core_web_sm')
 profanity_filter = ProfanityFilter(nlps={'en': nlp})  
 nlp.add_pipe(profanity_filter.spacy_component, last=True)
 
