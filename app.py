@@ -10,6 +10,7 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 from flask_wtf.csrf import CSRFProtect
 from profanity_filter import ProfanityFilter
 import spacy
+import en_core_web_sm
 from flask_mail import Mail, Message
 from sqlalchemy import and_
 from ratings import ratings_dict
@@ -35,7 +36,7 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 pf = ProfanityFilter()
-nlp = spacy.load('en_core_web_sm')
+nlp = en_core_web_sm.load()
 profanity_filter = ProfanityFilter(nlps={'en': nlp})  
 nlp.add_pipe(profanity_filter.spacy_component, last=True)
 
