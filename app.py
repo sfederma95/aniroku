@@ -10,6 +10,7 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 from flask_wtf.csrf import CSRFProtect
 from profanity_filter import ProfanityFilter
 import spacy
+import en_core_web_sm
 from flask_mail import Mail, Message
 from sqlalchemy import and_
 from ratings import ratings_dict
