@@ -1,0 +1,7 @@
+test_user_views.py
+test_models.py
+test_list_views.py
+*.pdf
+notes.txt
+secrets.py
+README.md

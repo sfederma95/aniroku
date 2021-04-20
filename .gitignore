@@ -6,7 +6,4 @@ test_models.pyc
 notes.txt
 .DS_Store
 static/.DS_Store
-runtime.txt
-Procfile
-.slugignore
 .vscode/
