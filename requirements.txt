@@ -10,7 +10,7 @@ click==7.1.2
 cymem==2.0.5
 dnspython==2.1.0
 email-validator==1.1.2
-https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-2.3.1/en_core_web_sm-2.3.1.tar.gz
+-e https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-2.3.1/en_core_web_sm-2.3.1.tar.gz
 Flask==1.1.2
 Flask-Bcrypt==0.7.1
 Flask-DebugToolbar==0.11.0
