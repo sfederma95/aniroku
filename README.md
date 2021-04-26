@@ -55,4 +55,4 @@ The Aniroku site can be found at: https://aniroku.herokuapp.com/
 * Flask
 * PostgreSQL
 ### Note:
-* Don't forget to set your environ variables for SQLALCHEMY_DATABASE_URI, SECRET_KEY, MAIL_USERNAME, and MAIL_PASSWORD!
+* To download this project for yourself, please refer to [the instructions file](instructions.md)
