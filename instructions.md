@@ -12,6 +12,6 @@
   * MAIL_USERNAME=youremail@email.com 
   * MAIL_PASSWORD=youremailpassword 
 * Download the relevant spacy model with: **python3 -m spacy download en_core_web_sm**
-* Update spacy symlink with **python -m spacy link en_core_web_sm**
+* Update spacy symlink with **python -m spacy link en_core_web_sm en**
 * Use **flask run** command to start up your project on localhost:5000
 * Enjoy!
